@@ -1,0 +1,206 @@
+{
+  "factory": [
+    {
+      "id": "enterprise_profile",
+      "title": "11,000 m² Manufacturing Base & R&D Center",
+      "image": "/assets/factory/enterprise_profile.webp"
+    },
+    {
+      "id": "rd_smd_packaging",
+      "title": "In-House SMD Packaging & Optical Engineering Team",
+      "image": "/assets/factory/rd_smd_packaging.webp"
+    },
+    {
+      "id": "laboratory_workshops",
+      "title": "CNAS-Grade Photometric Lab & 6 Silicone Co-Extrusion Lines",
+      "image": "/assets/factory/laboratory_workshops.webp"
+    },
+    {
+      "id": "certificates_wall",
+      "title": "International Compliance & Quality Management Certifications",
+      "image": "/assets/factory/certificates_wall.webp"
+    },
+    {
+      "id": "facility-1",
+      "title": "Automated SMD Packaging Line",
+      "image": "/assets/factory/lab_facility_01.webp"
+    },
+    {
+      "id": "facility-2",
+      "title": "High-Speed SMT Production Line",
+      "image": "/assets/factory/lab_facility_02.webp"
+    },
+    {
+      "id": "facility-3",
+      "title": "Silicone Co-Extrusion Workshop (6 Lines)",
+      "image": "/assets/factory/lab_facility_03.webp"
+    },
+    {
+      "id": "facility-4",
+      "title": "IES Goniophotometer Darkroom Lab",
+      "image": "/assets/factory/lab_facility_04.webp"
+    },
+    {
+      "id": "facility-5",
+      "title": "Integrating Sphere Spectroradiometer",
+      "image": "/assets/factory/lab_facility_05.webp"
+    },
+    {
+      "id": "facility-6",
+      "title": "IPX8 Pressurized Immersion Tank",
+      "image": "/assets/factory/lab_facility_06.webp"
+    },
+    {
+      "id": "facility-7",
+      "title": "IP3–IP6 Integrated Waterproof Chamber",
+      "image": "/assets/factory/lab_facility_07.webp"
+    },
+    {
+      "id": "facility-8",
+      "title": "Salt Spray Corrosion Test Chamber",
+      "image": "/assets/factory/lab_facility_08.webp"
+    },
+    {
+      "id": "facility-9",
+      "title": "UV Weathering & Anti-Yellowing Chamber",
+      "image": "/assets/factory/lab_facility_09.webp"
+    },
+    {
+      "id": "facility-10",
+      "title": "Microcomputer Tensile Strength Tester",
+      "image": "/assets/factory/lab_facility_10.webp"
+    },
+    {
+      "id": "facility-11",
+      "title": "2D Optical Coordinate Measuring System",
+      "image": "/assets/factory/lab_facility_11.webp"
+    },
+    {
+      "id": "facility-12",
+      "title": "Programmable Temp & Humidity Chamber",
+      "image": "/assets/factory/lab_facility_12.webp"
+    },
+    {
+      "id": "facility-13",
+      "title": "Transportation Vibration Test Platform",
+      "image": "/assets/factory/lab_facility_13.webp"
+    },
+    {
+      "id": "facility-14",
+      "title": "LED Strip Automated Production Workshop",
+      "image": "/assets/factory/lab_facility_14.webp"
+    },
+    {
+      "id": "facility-15",
+      "title": "Quality Testing Facility #15",
+      "image": "/assets/factory/lab_facility_15.webp"
+    },
+    {
+      "id": "facility-16",
+      "title": "Quality Testing Facility #16",
+      "image": "/assets/factory/lab_facility_16.webp"
+    },
+    {
+      "id": "facility-17",
+      "title": "Quality Testing Facility #17",
+      "image": "/assets/factory/lab_facility_17.webp"
+    },
+    {
+      "id": "facility-18",
+      "title": "Quality Testing Facility #18",
+      "image": "/assets/factory/lab_facility_18.webp"
+    },
+    {
+      "id": "facility-19",
+      "title": "Quality Testing Facility #19",
+      "image": "/assets/factory/lab_facility_19.webp"
+    },
+    {
+      "id": "facility-20",
+      "title": "Quality Testing Facility #20",
+      "image": "/assets/factory/lab_facility_20.webp"
+    },
+    {
+      "id": "facility-21",
+      "title": "Quality Testing Facility #21",
+      "image": "/assets/factory/lab_facility_21.webp"
+    },
+    {
+      "id": "facility-22",
+      "title": "Quality Testing Facility #22",
+      "image": "/assets/factory/lab_facility_22.webp"
+    },
+    {
+      "id": "facility-23",
+      "title": "Quality Testing Facility #23",
+      "image": "/assets/factory/lab_facility_23.webp"
+    },
+    {
+      "id": "facility-24",
+      "title": "Quality Testing Facility #24",
+      "image": "/assets/factory/lab_facility_24.webp"
+    },
+    {
+      "id": "facility-25",
+      "title": "Quality Testing Facility #25",
+      "image": "/assets/factory/lab_facility_25.webp"
+    },
+    {
+      "id": "facility-26",
+      "title": "Quality Testing Facility #26",
+      "image": "/assets/factory/lab_facility_26.webp"
+    },
+    {
+      "id": "facility-27",
+      "title": "Quality Testing Facility #27",
+      "image": "/assets/factory/lab_facility_27.webp"
+    }
+  ],
+  "certificates": [
+    {
+      "id": "cert-1",
+      "title": "ISO 9001:2015 Quality Management",
+      "image": "/assets/certs/cert_01.webp"
+    },
+    {
+      "id": "cert-2",
+      "title": "ISO 14001:2015 Environmental Management",
+      "image": "/assets/certs/cert_02.webp"
+    },
+    {
+      "id": "cert-3",
+      "title": "ISO 45001:2018 Occupational Health & Safety",
+      "image": "/assets/certs/cert_03.webp"
+    },
+    {
+      "id": "cert-4",
+      "title": "ETL Listed (Intertek North America)",
+      "image": "/assets/certs/cert_04.webp"
+    },
+    {
+      "id": "cert-5",
+      "title": "TUV Rheinland CE Compliance",
+      "image": "/assets/certs/cert_05.webp"
+    },
+    {
+      "id": "cert-6",
+      "title": "UKCA Conformity Assessment",
+      "image": "/assets/certs/cert_06.webp"
+    },
+    {
+      "id": "cert-7",
+      "title": "RCM Australia & New Zealand Compliance",
+      "image": "/assets/certs/cert_07.webp"
+    },
+    {
+      "id": "cert-8",
+      "title": "RoHS 2.0 Hazardous Substances Report",
+      "image": "/assets/certs/cert_08.webp"
+    },
+    {
+      "id": "cert-9",
+      "title": "LM-80 50,000-Hour Lumen Maintenance",
+      "image": "/assets/certs/cert_09.webp"
+    }
+  ]
+}

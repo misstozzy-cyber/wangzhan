@@ -1,0 +1,56 @@
+[
+  {
+    "id": "cat-neon-v2",
+    "title": "Silicone LED Neon Flex & Wall Grazer Master Catalogue (V2)",
+    "filename": "Catalogue of Silicone Led neon_TYRIA LIGHTING-V2.pdf",
+    "pages": 36,
+    "category": "LED Neon Flex & Wall Grazer",
+    "highlight": "50+ Silicone Profiles, Enterprise Profile, Lab & Certifications",
+    "url": "/downloads/catalogs/cat-neon-v2.pdf"
+  },
+  {
+    "id": "cat-strip-2026",
+    "title": "2026 Flexible LED Strip & LED Sheet Master Catalogue",
+    "filename": "Catalog of FLEX LED STRIP_TYRIA LIGHTING-2026.pdf",
+    "pages": 17,
+    "category": "LED Strip & Sheet",
+    "highlight": "13 Series: High-Efficiency 160–180lm/W, COB, SMD2010/2216/2835/3528/5050/5630/3014, S-Shape",
+    "url": "/downloads/catalogs/cat-strip-2026.pdf"
+  },
+  {
+    "id": "cat-pixel-neon-v3",
+    "title": "DMX512 & SPI Addressable Pixel Silicone Neon Flex Catalogue (Ver. 3.0)",
+    "filename": "Ver.3.0-Catalogue of DMX512 SPI Led neon flex_TYRIA LIGHTING.pdf",
+    "pages": 27,
+    "category": "Pixel Neon Flex",
+    "highlight": "UCS512 / WS2818 / UCS2904 Breakpoint Transmission Pixel Neon",
+    "url": "/downloads/catalogs/cat-pixel-neon-v3.pdf"
+  },
+  {
+    "id": "cat-cob-plus-v23",
+    "title": "COB PLUS Integrated Dot-Free LED Strip Catalogue (Ver. 2.3)",
+    "filename": "Catalogue of COB PLUS led strip light_TYRIA LIGHTING-Ver.2.3.pdf",
+    "pages": 23,
+    "category": "COB PLUS Strip",
+    "highlight": "8mm / 10mm / 12mm / 14mm Integrated Extrusion COB PLUS",
+    "url": "/downloads/catalogs/cat-cob-plus-v23.pdf"
+  },
+  {
+    "id": "cat-48v-super-long",
+    "title": "48V Super Long Run Constant Current LED Strip Catalogue",
+    "filename": "Catalogue of 48V super long led strip_TYRIA LIGHTING.pdf",
+    "pages": 15,
+    "category": "48V Super Long Strip",
+    "highlight": "Single-End Power Feed Runs up to 60 Meters Without Voltage Drop",
+    "url": "/downloads/catalogs/cat-48v-super-long.pdf"
+  },
+  {
+    "id": "cat-addressable-strip",
+    "title": "DMX512 & SPI Addressable Pixel LED Strip Catalogue",
+    "filename": "Catalogue of Addressable led strip light_TYRIA LIGHTING.pdf",
+    "pages": 22,
+    "category": "Addressable Pixel Strip",
+    "highlight": "Dual-Signal Breakpoint-Continuous DMX512 & SPI Digital Strips",
+    "url": "/downloads/catalogs/cat-addressable-strip.pdf"
+  }
+]
