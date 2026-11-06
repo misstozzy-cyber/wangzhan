@@ -10,8 +10,8 @@ export function Pixel() {
   const radius = useTransform(scrollYProgress, [0, 0.45], [40, 0]);
   const clipPath = useTransform([inset, radius], ([i, r]) => `inset(${i}% ${i}% ${i}% ${i}% round ${r}px)`);
   const imgScale = useTransform(scrollYProgress, [0, 1], [1.25, 1]);
-  const titleOpacity = useTransform(scrollYProgress, [0.35, 0.55], [0, 1]);
-  const titleY = useTransform(scrollYProgress, [0.35, 0.6], [40, 0]);
+  const titleOpacity = useTransform(scrollYProgress, [0.28, 0.42], [0, 1]);
+  const titleY = useTransform(scrollYProgress, [0.28, 0.45], [40, 0]);
 
   return (
     <section ref={ref} className="relative h-[260vh]">

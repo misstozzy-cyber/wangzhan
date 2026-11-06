@@ -1,10 +1,20 @@
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useScroll, useSpring, useTransform, type MotionValue } from 'framer-motion';
+import {
+  AnimatePresence,
+  motion,
+  useMotionValueEvent,
+  useScroll,
+  useSpring,
+  useTransform,
+} from 'framer-motion';
 import { Product } from '../../types/product';
 import { ProfileCrossSectionSVG } from '../products/ProfileCrossSectionSVG';
 
-// A size-ordered tour of the neon range, all drawn at the same scale.
+const SILK = [0.22, 1, 0.36, 1] as const;
+
+// A size-ordered tour of the neon range. Every specimen is drawn at the same scale,
+// so the object on stage physically grows as the visitor scrolls.
 const PICK = [
   'neon-flex-0306-sv-ty-ns0306v24p6',
   'neon-flex-0606-tv-ty-nt0606v24px',
@@ -24,60 +34,18 @@ const PICK = [
   'neon-flex-5025-tv-ty-nt5025v24px',
 ];
 
-const SCALE = 3.4;
+const VIEW_NAME: Record<string, string> = {
+  TV: 'Top view',
+  SV: 'Side view',
+  '360': '360° round',
+  '3D': '3D dual bend',
+  Dome: 'Dome',
+  'Anti-Glare': 'Anti-glare UGR<19',
+  Embedded: 'Recessed',
+};
 
-function ArcCard({ p, i, pos, cardW }: { p: Product; i: number; pos: MotionValue<number>; cardW: number }) {
-  const R = cardW * 4.2;
-  const transform = useTransform(pos, (v) => {
-    const dv = i - v;
-    const a = dv * 0.3;
-    const x = Math.sin(a) * R;
-    const z = (Math.cos(a) - 1) * R;
-    const y = (1 - Math.cos(a)) * -R * 0.4;
-    const lift = Math.max(0, 1 - Math.abs(dv));
-    return `translate3d(${x}px, ${y - lift * 20}px, ${z}px) rotateY(${a}rad) scale(${1 + lift * 0.12})`;
-  });
-  const opacity = useTransform(pos, (v) => Math.max(0, 1 - Math.max(0, Math.abs(i - v) - 2.6) * 1.2));
-  const zIndex = useTransform(pos, (v) => 100 - Math.round(Math.abs(i - v) * 10));
-
-  return (
-    <motion.div
-      className="absolute left-1/2 top-1/2"
-      style={{
-        width: cardW,
-        height: cardW * 1.3,
-        marginLeft: -cardW / 2,
-        marginTop: -cardW * 0.65,
-        transform,
-        opacity,
-        zIndex,
-        backfaceVisibility: 'hidden',
-      }}
-    >
-      <Link
-        to={`/product/${p.id}`}
-        className="group flex h-full w-full flex-col overflow-hidden rounded-[26px] bg-ink text-canvas"
-      >
-        <div className="flex flex-1 items-center justify-center text-canvas">
-          <ProfileCrossSectionSVG w={p.size.w} h={p.size.h} view={p.view} scale={SCALE} showDimensions={false} />
-        </div>
-        <div className="flex items-end justify-between px-5 pb-5">
-          <div>
-            <div className="font-display text-[18px] tracking-[-0.03em]">{p.model}</div>
-            <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.08em] text-canvas/50">
-              {p.view === '360' ? `Ø ${p.size.w}` : `${p.size.w} × ${p.size.h}`} mm · {p.ip}
-            </div>
-          </div>
-          <span className="grid h-8 w-8 place-items-center rounded-full bg-canvas/10 transition-all duration-500 ease-silk group-hover:bg-canvas group-hover:text-ink">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-              <path d="M3 9L9 3M9 3H4M9 3v5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </span>
-        </div>
-      </Link>
-    </motion.div>
-  );
-}
+const SCALE = 3.4; // px per mm inside the SVG
+const dims = (p: Product) => (p.view === '360' ? `Ø ${p.size.w} mm` : `${p.size.w} × ${p.size.h} mm`);
 
 export function Profiles({ products }: { products: Product[] }) {
   const ref = useRef<HTMLElement>(null);
@@ -85,47 +53,149 @@ export function Profiles({ products }: { products: Product[] }) {
     () => PICK.map((id) => products.find((p) => p.id === id)).filter((p): p is Product => Boolean(p)),
     [products],
   );
+  const [active, setActive] = useState(0);
+
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  const raw = useTransform(scrollYProgress, [0.05, 0.95], [0, items.length - 1]);
-  const pos = useSpring(raw, { stiffness: 120, damping: 26, mass: 0.6 });
-  const counter = useTransform(pos, (v) => String(Math.min(items.length, Math.round(v) + 1)).padStart(2, '0'));
-  const bar = useTransform(scrollYProgress, [0.05, 0.95], ['0%', '100%']);
-  const cardW = typeof window !== 'undefined' ? Math.round(Math.min(240, Math.max(170, window.innerWidth * 0.16))) : 220;
+  const raw = useTransform(scrollYProgress, [0.04, 0.96], [0, items.length - 1]);
+  useMotionValueEvent(raw, 'change', (v) => {
+    const i = Math.max(0, Math.min(items.length - 1, Math.round(v)));
+    setActive((prev) => (prev === i ? prev : i));
+  });
+
+  // The lineup ruler slides so the active specimen sits under the stage.
+  const smooth = useSpring(raw, { stiffness: 140, damping: 28 });
+  const lineupX = useTransform(smooth, (v) => `calc(-${v} * (var(--slot) + 24px) - var(--slot) / 2)`);
+  const p = items[active];
+
+  const jump = (i: number) => {
+    const el = ref.current;
+    if (!el) return;
+    const top = el.offsetTop;
+    const travel = el.offsetHeight - window.innerHeight;
+    const t = 0.04 + (i / (items.length - 1)) * 0.92;
+    window.scrollTo({ top: top + travel * t + 1, behavior: 'smooth' });
+  };
+
+  if (!p) return null;
 
   return (
-    <section ref={ref} id="profiles" className="relative" style={{ height: `${items.length * 38 + 60}vh` }}>
+    <section ref={ref} id="profiles" className="relative" style={{ height: `${items.length * 32 + 80}vh` }}>
       <div className="sticky top-0 flex h-[100svh] flex-col overflow-hidden">
-        <div className="mx-auto flex w-full max-w-[1600px] items-end justify-between px-5 pt-28 sm:px-10">
-          <div>
+        {/* Millimetre grid: the drawing board the specimens sit on */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-[0.55] [mask-image:radial-gradient(ellipse_55%_50%_at_50%_50%,#000_30%,transparent_75%)]"
+          style={{
+            backgroundImage:
+              'linear-gradient(rgba(17,17,17,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(17,17,17,0.07) 1px, transparent 1px)',
+            backgroundSize: '34px 34px',
+            backgroundPosition: 'center center',
+          }}
+        />
+
+        <div className="relative mx-auto grid w-full max-w-[1600px] flex-1 grid-cols-1 items-center gap-6 px-5 pt-24 sm:px-10 lg:grid-cols-12">
+          {/* Left: the spec readout */}
+          <div className="order-2 lg:order-1 lg:col-span-4">
             <div className="micro mb-5">02 — Profiles</div>
-            <h2 className="max-w-[14ch] font-display text-[clamp(36px,4.6vw,76px)] font-normal leading-[1] tracking-[-0.045em] text-ink">
+            <h2 className="mb-10 max-w-[12ch] font-display text-[clamp(30px,3.4vw,56px)] font-normal leading-[1] tracking-[-0.045em] text-ink">
               Every profile, drawn to scale.
             </h2>
-          </div>
-          <div className="hidden text-right sm:block">
-            <div className="font-display text-[44px] font-light tabular-nums tracking-[-0.05em] text-ink">
-              <motion.span>{counter}</motion.span>
-              <span className="text-mute"> / {String(items.length).padStart(2, '0')}</span>
+            <div className="relative h-[150px] sm:h-[170px]">
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.div
+                  key={p.id}
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -24 }}
+                  transition={{ duration: 0.55, ease: SILK }}
+                  className="absolute inset-0"
+                >
+                  <div className="font-display text-[clamp(44px,5vw,84px)] font-light leading-none tracking-[-0.055em] text-ink">
+                    {p.model}
+                  </div>
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {[dims(p), VIEW_NAME[p.view] ?? p.view, p.ip].map((t) => (
+                      <span key={t} className="rounded-full bg-stone/80 px-3.5 py-1.5 text-[13px] text-graphite">
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                  <Link
+                    to={`/product/${p.id}`}
+                    className="mt-5 inline-flex items-center gap-2 text-[14px] text-ink underline-offset-4 hover:underline"
+                  >
+                    View datasheet
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                      <path d="M3 9L9 3M9 3H4M9 3v5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </Link>
+                </motion.div>
+              </AnimatePresence>
             </div>
-            <div className="micro mt-1">3 mm to 50 mm · same scale</div>
+          </div>
+
+          {/* Centre: the specimen, true scale, morphing from one profile to the next */}
+          <div className="relative order-1 flex h-[38vh] items-center justify-center lg:order-2 lg:col-span-5 lg:h-[56vh]">
+            <AnimatePresence mode="popLayout" initial={false}>
+              <motion.div
+                key={p.id}
+                initial={{ opacity: 0, scale: 0.86, filter: 'blur(14px)' }}
+                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, scale: 1.1, filter: 'blur(14px)' }}
+                transition={{ duration: 0.7, ease: SILK }}
+                className="absolute flex items-center justify-center text-ink"
+              >
+                <div className="scale-[1.4] sm:scale-[2.1]">
+                  <ProfileCrossSectionSVG w={p.size.w} h={p.size.h} view={p.view} scale={SCALE} showDimensions={false} />
+                </div>
+              </motion.div>
+            </AnimatePresence>
+            {/* 10 mm scale bar, same scale as the drawing */}
+            <div className="absolute bottom-0 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2">
+              <div className="h-[3px] rounded-full bg-ink/70" style={{ width: `calc(${10 * SCALE}px * var(--spec-zoom))` }} />
+              <span className="micro">10 mm</span>
+            </div>
+          </div>
+
+          {/* Right: big counter */}
+          <div className="order-3 hidden lg:col-span-3 lg:block lg:text-right">
+            <div className="font-display text-[clamp(64px,7vw,128px)] font-light leading-none tabular-nums tracking-[-0.06em] text-ink">
+              {String(active + 1).padStart(2, '0')}
+            </div>
+            <div className="micro mt-3">of {items.length} · 3 mm to 50 mm</div>
           </div>
         </div>
-        <div className="relative flex-1" style={{ perspective: 1800 }}>
-          <div className="absolute inset-0" style={{ transformStyle: 'preserve-3d' }}>
-            {items.map((p, i) => (
-              <ArcCard key={p.id} p={p} i={i} pos={pos} cardW={cardW} />
+
+        {/* Bottom: the whole range lined up on one baseline, at true relative size */}
+        <div className="relative mb-8 mt-4 h-[84px] w-full">
+          <motion.div
+            className="absolute bottom-6 left-1/2 flex items-end gap-6"
+            style={{ x: lineupX }}
+          >
+            {items.map((it, i) => (
+              <button
+                key={it.id}
+                type="button"
+                onClick={() => jump(i)}
+                aria-label={`Show ${it.model}`}
+                className={`flex w-[var(--slot)] shrink-0 items-end justify-center transition-all duration-700 ease-silk ${
+                  i === active ? 'opacity-100' : 'opacity-30 hover:opacity-70'
+                }`}
+              >
+                <span
+                  className={`block rounded-[3px] transition-colors duration-700 ease-silk ${
+                    it.view === '360' || it.view === 'Dome' ? 'rounded-t-full' : ''
+                  } ${i === active ? 'bg-ink' : 'bg-ink/60'}`}
+                  style={{ width: it.size.w * 1.15, height: Math.max(4, (it.view === '360' ? it.size.w : it.size.h) * 1.15) }}
+                />
+              </button>
             ))}
-          </div>
-        </div>
-        <div className="mx-auto mb-10 flex w-full max-w-[1600px] items-center gap-6 px-5 sm:px-10">
-          <div className="h-[3px] flex-1 overflow-hidden rounded-full bg-ink/10">
-            <motion.div style={{ width: bar }} className="h-full rounded-full bg-ink" />
-          </div>
-          <Link to="/products/neon-flex" className="pill-soft">
-            All neon profiles
-          </Link>
+          </motion.div>
+          <div className="absolute bottom-[22px] left-0 right-0 h-px bg-ink/10" />
+          <div className="micro absolute bottom-0 left-1/2 hidden -translate-x-1/2 whitespace-nowrap sm:block">Lineup at true relative size</div>
         </div>
       </div>
+      <style>{`#profiles{--slot:62px;--spec-zoom:1.4}@media (min-width:640px){#profiles{--spec-zoom:2.1}}`}</style>
     </section>
   );
 }
