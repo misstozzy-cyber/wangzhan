@@ -11,8 +11,8 @@ export const NotFoundPage: React.FC = () => {
         description="The requested page could not be found. Explore TYRIA Lighting's 1:1 Profile Atlas or Spec Finder."
       />
       <div className="max-w-lg w-full p-8 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] text-center space-y-5">
-        <div className="font-mono text-xs text-[#1E6FD9]">ERROR 404 · CIRCUIT OPEN</div>
-        <h1 className="font-display font-bold text-3xl text-[var(--text-primary)]">
+        <div className="font-mono text-xs text-[#111111]">ERROR 404 · CIRCUIT OPEN</div>
+        <h1 className="font-display font-medium text-3xl text-[var(--text-primary)]">
           Specification Route Not Found
         </h1>
         <p className="text-xs sm:text-sm text-[var(--text-secondary)]">
@@ -21,15 +21,15 @@ export const NotFoundPage: React.FC = () => {
         <div className="flex flex-wrap items-center justify-center gap-3 pt-2 font-mono text-xs">
           <Link
             to="/"
-            className="px-4 py-2.5 bg-[#1E6FD9] text-white font-semibold flex items-center gap-1.5"
+            className="px-4 py-2.5 bg-[#111111] text-white font-semibold flex items-center gap-1.5"
           >
             <ArrowLeft className="w-3.5 h-3.5" /> Back to Home
           </Link>
           <Link
             to="/products/neon-flex/atlas"
-            className="px-4 py-2.5 border border-[var(--border-hairline)] hover:border-[var(--glow)] flex items-center gap-1.5"
+            className="px-4 py-2.5 border border-[var(--border-hairline)] hover:border-[var(--text-primary)] flex items-center gap-1.5"
           >
-            <Layers className="w-3.5 h-3.5 text-[var(--glow)]" /> 1:1 Profile Atlas
+            <Layers className="w-3.5 h-3.5 text-[var(--text-primary)]" /> 1:1 Profile Atlas
           </Link>
           <Link
             to="/spec-finder"

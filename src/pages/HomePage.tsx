@@ -96,7 +96,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8 space-y-12">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
-              <h2 className="font-display font-bold text-3xl sm:text-4xl tracking-tight text-[var(--text-primary)]">
+              <h2 className="font-display font-medium text-3xl sm:text-4xl tracking-tight text-[var(--text-primary)]">
                 From LED Chip to Co-Extruded Reel
               </h2>
               <p className="text-sm sm:text-base text-[var(--text-secondary)] mt-2 max-w-[64ch]">
@@ -105,7 +105,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             </div>
             <Link
               to="/factory"
-              className="font-mono text-xs text-[#1E6FD9] hover:underline flex items-center gap-1 shrink-0"
+              className="font-mono text-xs text-[#111111] hover:underline flex items-center gap-1 shrink-0"
             >
               <span>INSPECT LAB & 19 CERTIFICATIONS</span>
               <ArrowUpRight className="w-4 h-4" />
@@ -134,12 +134,12 @@ export const HomePage: React.FC<HomePageProps> = ({
                     </div>
                   )}
                   <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
-                    <div className="flex items-center justify-between font-mono text-[11px] text-[#1E6FD9]">
+                    <div className="flex items-center justify-between font-mono text-[11px] text-[#111111]">
                       <span>{s.step}</span>
-                      <Icon className="w-4 h-4 text-[var(--glow)]" />
+                      <Icon className="w-4 h-4 text-[var(--text-primary)]" />
                     </div>
                     <div>
-                      <h3 className="font-display font-semibold text-sm text-[var(--text-primary)] mb-1.5">
+                      <h3 className="font-display font-medium text-sm text-[var(--text-primary)] mb-1.5">
                         {s.title}
                       </h3>
                       <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
@@ -159,7 +159,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8 space-y-10">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div>
-              <h2 className="font-display font-bold text-3xl sm:text-4xl tracking-tight text-[var(--text-primary)]">
+              <h2 className="font-display font-medium text-3xl sm:text-4xl tracking-tight text-[var(--text-primary)]">
                 Lighting Designer Resource Hub
               </h2>
               <p className="text-sm sm:text-base text-[var(--text-secondary)] mt-2 max-w-[66ch]">
@@ -168,7 +168,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             </div>
             <Link
               to="/designer-hub"
-              className="inline-flex items-center gap-2 px-5 py-3 bg-[#1E6FD9] hover:bg-[#185EC0] text-white font-mono text-xs font-semibold shrink-0"
+              className="inline-flex items-center gap-2 px-5 py-3 bg-[#111111] hover:bg-[#185EC0] text-white font-mono text-xs font-semibold shrink-0"
             >
               <Download className="w-4 h-4" />
               <span>Open Full Designer Hub (380+ Files) →</span>
@@ -182,11 +182,11 @@ export const HomePage: React.FC<HomePageProps> = ({
                 className="p-5 bg-[var(--bg-primary)] border border-[var(--border-hairline)] flex flex-col justify-between gap-4 glow-border-hover"
               >
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between font-mono text-[11px] text-[#1E6FD9]">
+                  <div className="flex items-center justify-between font-mono text-[11px] text-[#111111]">
                     <span>{cat.category.toUpperCase()}</span>
                     <span>{cat.pages} PAGES · PDF</span>
                   </div>
-                  <h3 className="font-display font-bold text-base text-[var(--text-primary)]">
+                  <h3 className="font-display font-medium text-base text-[var(--text-primary)]">
                     {cat.title}
                   </h3>
                   <p className="text-xs text-[var(--text-secondary)]">{cat.highlight}</p>
@@ -200,7 +200,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     href={cat.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--bg-elevated)] hover:bg-[#1E6FD9] hover:text-white border border-[var(--border-hairline)] font-mono text-xs transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--bg-elevated)] hover:bg-[#111111] hover:text-white border border-[var(--border-hairline)] font-mono text-xs transition-colors"
                   >
                     <FileText className="w-3.5 h-3.5" />
                     <span>Download PDF</span>
@@ -217,7 +217,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
           <div className="p-8 sm:p-12 border border-white/15 bg-[#0D0F14] relative overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-8 space-y-4">
-              <h2 className="font-display font-bold text-3xl sm:text-4xl tracking-tight">
+              <h2 className="font-display font-medium text-3xl sm:text-4xl tracking-tight">
                 Request a Free Architectural Sample Kit
               </h2>
               <p className="text-sm sm:text-base text-[#949BA8] max-w-[62ch]">
@@ -233,7 +233,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3">
               <Link
                 to="/contact"
-                className="w-full py-3.5 px-6 bg-[#1E6FD9] hover:bg-[#185EC0] text-white font-mono text-xs font-semibold flex items-center justify-center gap-2"
+                className="w-full py-3.5 px-6 bg-[#111111] hover:bg-[#185EC0] text-white font-mono text-xs font-semibold flex items-center justify-center gap-2"
               >
                 <Send className="w-4 h-4" />
                 <span>Request Sample Kit & Quote</span>

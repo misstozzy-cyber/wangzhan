@@ -51,14 +51,14 @@ export const ContactPage: React.FC = () => {
         {/* Top Heading */}
         <div className="border-b border-[var(--border-hairline)] pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <h1 className="font-display font-bold text-3xl sm:text-5xl tracking-tight text-[var(--text-primary)]">
+            <h1 className="font-display font-medium text-3xl sm:text-5xl tracking-tight text-[var(--text-primary)]">
               Contact & Sample Request Desk
             </h1>
             <p className="text-sm sm:text-base text-[var(--text-secondary)] mt-2 max-w-[64ch]">
               Direct communication with TYRIA optical and structural sales engineers in Shenzhen. No middlemen — receive specification quotes, custom cutting drawings, and sample tracking numbers.
             </p>
           </div>
-          <div className="inline-flex items-center gap-2 px-3.5 py-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-xs shrink-0">
+          <div className="inline-flex items-center gap-2 px-3.5 py-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 font-mono text-xs shrink-0">
             <Clock className="w-4 h-4" />
             <span>GUARANTEED REPLY WITHIN 12 HOURS</span>
           </div>
@@ -69,7 +69,7 @@ export const ContactPage: React.FC = () => {
           {/* Left Direct Channels & Factory Addresses */}
           <div className="lg:col-span-5 space-y-6">
             <div className="p-6 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] space-y-4">
-              <div className="font-mono text-xs text-[#1E6FD9] font-semibold">
+              <div className="font-mono text-xs text-[#111111] font-semibold">
                 DIRECT ENGINEERING CHANNELS
               </div>
 
@@ -81,10 +81,10 @@ export const ContactPage: React.FC = () => {
                   className="flex items-center justify-between p-3.5 bg-[#16A34A]/15 border border-[#16A34A]/40 hover:bg-[#16A34A]/25 text-[var(--text-primary)] transition-colors"
                 >
                   <span className="flex items-center gap-2 font-semibold">
-                    <MessageCircle className="w-4 h-4 text-emerald-400" />
+                    <MessageCircle className="w-4 h-4 text-emerald-700" />
                     WhatsApp Instant Chat
                   </span>
-                  <span className="text-emerald-400">+86 189 3869 3458 →</span>
+                  <span className="text-emerald-700">+86 189 3869 3458 →</span>
                 </a>
 
                 <a
@@ -92,7 +92,7 @@ export const ContactPage: React.FC = () => {
                   className="flex items-center justify-between p-3.5 bg-[var(--bg-primary)] border border-[var(--border-hairline)] hover:border-white/30 text-[var(--text-primary)]"
                 >
                   <span className="flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-[#1E6FD9]" />
+                    <Mail className="w-4 h-4 text-[#111111]" />
                     Official Email
                   </span>
                   <span>info@tyrialight.com</span>
@@ -103,7 +103,7 @@ export const ContactPage: React.FC = () => {
                   className="flex items-center justify-between p-3.5 bg-[var(--bg-primary)] border border-[var(--border-hairline)] hover:border-white/30 text-[var(--text-primary)]"
                 >
                   <span className="flex items-center gap-2">
-                    <Phone className="w-4 h-4 text-[#1E6FD9]" />
+                    <Phone className="w-4 h-4 text-[#111111]" />
                     Factory Landline
                   </span>
                   <span>+86 755 3693 1652</span>
@@ -112,13 +112,13 @@ export const ContactPage: React.FC = () => {
             </div>
 
             <div className="p-6 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] space-y-4 text-xs">
-              <div className="font-mono text-xs text-[#1E6FD9] font-semibold flex items-center gap-1.5">
+              <div className="font-mono text-xs text-[#111111] font-semibold flex items-center gap-1.5">
                 <MapPin className="w-4 h-4" />
                 <span>TWO SHENZHEN MANUFACTURING BASES</span>
               </div>
 
               <div className="space-y-1 pb-3 border-b border-[var(--border-hairline)]">
-                <div className="font-display font-bold text-sm text-[var(--text-primary)]">
+                <div className="font-display font-medium text-sm text-[var(--text-primary)]">
                   Factory 1 (HQ, Silicone Neon Co-Extrusion & Photometric Lab)
                 </div>
                 <p className="text-[var(--text-secondary)]">
@@ -127,7 +127,7 @@ export const ContactPage: React.FC = () => {
               </div>
 
               <div className="space-y-1">
-                <div className="font-display font-bold text-sm text-[var(--text-primary)]">
+                <div className="font-display font-medium text-sm text-[var(--text-primary)]">
                   Factory 2 (SMD LED Packaging & Automated SMT Base)
                 </div>
                 <p className="text-[var(--text-secondary)]">
@@ -141,8 +141,8 @@ export const ContactPage: React.FC = () => {
           <div className="lg:col-span-7 p-6 sm:p-8 bg-[var(--bg-elevated)] border border-[var(--border-hairline)]">
             {submitted ? (
               <div className="py-12 text-center space-y-4">
-                <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto" />
-                <h2 className="font-display font-bold text-2xl text-[var(--text-primary)]">
+                <CheckCircle2 className="w-12 h-12 text-emerald-700 mx-auto" />
+                <h2 className="font-display font-medium text-2xl text-[var(--text-primary)]">
                   Thank You — Your Request Has Been Received
                 </h2>
                 <p className="text-xs sm:text-sm text-[var(--text-secondary)] max-w-md mx-auto">
@@ -160,7 +160,7 @@ export const ContactPage: React.FC = () => {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
-                <h2 className="font-display font-bold text-xl text-[var(--text-primary)]">
+                <h2 className="font-display font-medium text-xl text-[var(--text-primary)]">
                   Request Free Engineering Samples or Project Quote
                 </h2>
 
@@ -263,7 +263,7 @@ export const ContactPage: React.FC = () => {
 
                 <button
                   type="submit"
-                  className="w-full py-3.5 px-6 bg-[#1E6FD9] hover:bg-[#185EC0] text-white font-mono text-xs font-semibold flex items-center justify-center gap-2 transition-colors"
+                  className="w-full py-3.5 px-6 bg-[#111111] hover:bg-[#185EC0] text-white font-mono text-xs font-semibold flex items-center justify-center gap-2 transition-colors"
                 >
                   <Send className="w-4 h-4" />
                   <span>Send Specification & Sample Request (12h Response)</span>

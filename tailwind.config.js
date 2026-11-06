@@ -1,25 +1,31 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: 'class',
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
+        canvas: '#F5F4F0',
+        paper: '#FBFAF7',
+        stone: '#E9E6DF',
+        ink: '#111111',
+        graphite: '#55534E',
+        mute: '#8C8A84',
+        glow: '#FFC97A',
         brand: {
-          blue: '#1E6FD9',
-          dark: '#07080B',
-          elevated: '#0D0F14',
-          surface: '#13161F',
-          light: '#F5F6F8',
-        }
+          blue: '#111111',
+          dark: '#111111',
+          elevated: '#FBFAF7',
+          surface: '#E9E6DF',
+          light: '#F5F4F0',
+        },
       },
       fontFamily: {
-        display: ['"Space Grotesk"', 'sans-serif'],
+        display: ['"Inter Tight"', '"Inter"', 'sans-serif'],
         sans: ['"Inter"', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'monospace'],
+        mono: ['"Geist Mono"', 'ui-monospace', 'monospace'],
+      },
+      letterSpacing: {
+        tightest: '-0.045em',
       },
     },
   },

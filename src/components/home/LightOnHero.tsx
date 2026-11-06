@@ -129,7 +129,7 @@ export const LightOnHero: React.FC = () => {
       <div className="relative z-10 max-w-[1440px] w-full mx-auto px-4 sm:px-8 pt-12 pb-12 lg:py-20 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center flex-1">
         {/* Left Column: Architectural Typography & Actions (7 cols) */}
         <div className="lg:col-span-7 space-y-8">
-          <h1 className="font-display font-bold text-4xl sm:text-6xl xl:text-[4.25rem] leading-[1.04] tracking-[-0.035em] text-[#F3F5F8] max-w-[15ch]">
+          <h1 className="font-display font-medium text-4xl sm:text-6xl xl:text-[4.25rem] leading-[1.04] tracking-[-0.035em] text-[#F3F5F8] max-w-[15ch]">
             Light, Engineered to Bend.
           </h1>
 
@@ -142,7 +142,7 @@ export const LightOnHero: React.FC = () => {
           <div className="flex flex-wrap items-center gap-4 pt-1">
             <Link
               to="/products/neon-flex"
-              className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-sm bg-[#1E6FD9] hover:bg-[#185EC0] text-white font-display font-semibold text-sm tracking-tight transition-all"
+              className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-sm bg-[#111111] hover:bg-[#185EC0] text-white font-display font-medium text-sm tracking-tight transition-all"
             >
               <span>Explore Neon Flex</span>
               <ArrowRight className="w-4 h-4" />
@@ -152,7 +152,7 @@ export const LightOnHero: React.FC = () => {
               to="/spec-finder"
               className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-sm bg-[#0D0F14] hover:bg-[#13161F] text-[#F3F5F8] border border-white/15 font-mono text-xs font-medium transition-all glow-border-hover"
             >
-              <Sliders className="w-4 h-4 text-[var(--glow)]" />
+              <Sliders className="w-4 h-4 text-[var(--text-primary)]" />
               <span>Find by Spec (110+ Models)</span>
             </Link>
 
@@ -160,7 +160,7 @@ export const LightOnHero: React.FC = () => {
               to="/products/neon-flex/atlas"
               className="inline-flex items-center gap-2 px-4 py-3.5 text-xs font-mono text-[#949BA8] hover:text-[#F3F5F8] transition-colors"
             >
-              <Layers className="w-4 h-4 text-[#1E6FD9]" />
+              <Layers className="w-4 h-4 text-[#111111]" />
               <span>1:1 Profile Atlas →</span>
             </Link>
           </div>
@@ -201,7 +201,7 @@ export const LightOnHero: React.FC = () => {
                 onClick={() => setIsPowerOn(!isPowerOn)}
                 className={`ml-auto inline-flex items-center gap-1.5 px-3 py-1 rounded-sm font-mono text-[11px] border transition-all ${
                   isPowerOn
-                    ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300'
+                    ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-700'
                     : 'border-white/15 bg-white/5 text-[#949BA8]'
                 }`}
                 title="Physical Circuit Breaker Toggle"
@@ -279,7 +279,7 @@ export const LightOnHero: React.FC = () => {
                   x="260"
                   y="318"
                   textAnchor="middle"
-                  className="font-display font-bold text-[22px] tracking-[0.38em]"
+                  className="font-display font-medium text-[22px] tracking-[0.38em]"
                   fill="var(--glow)"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -299,10 +299,10 @@ export const LightOnHero: React.FC = () => {
                   cy="95"
                   r="38"
                   fill="none"
-                  stroke="#1E6FD9"
+                  stroke="#111111"
                   strokeDasharray="3 3"
                 />
-                <text x="170" y="98" textAnchor="middle" fill="#1E6FD9">
+                <text x="170" y="98" textAnchor="middle" fill="#111111">
                   R=100mm
                 </text>
                 <text x="35" y="42">

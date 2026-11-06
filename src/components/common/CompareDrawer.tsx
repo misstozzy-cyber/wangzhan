@@ -17,11 +17,11 @@ export const CompareDrawer: React.FC<CompareDrawerProps> = ({ products }) => {
   if (selected.length === 0) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 bg-[var(--bg-elevated)] border-t border-[#1E6FD9]/50 shadow-2xl">
+    <div className="fixed bottom-0 left-0 right-0 z-40 bg-[var(--bg-elevated)] border-t border-[#111111]/50 shadow-2xl">
       {/* Compact Bar */}
       <div className="max-w-[1440px] mx-auto px-4 sm:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex items-center gap-1.5 font-mono text-xs font-semibold text-[#1E6FD9]">
+          <div className="flex items-center gap-1.5 font-mono text-xs font-semibold text-[#111111]">
             <ArrowLeftRight className="w-4 h-4" />
             <span>COMPARE ({selected.length}/4)</span>
           </div>
@@ -55,7 +55,7 @@ export const CompareDrawer: React.FC<CompareDrawerProps> = ({ products }) => {
           <button
             type="button"
             onClick={() => setExpanded((e) => !e)}
-            className="px-4 py-1.5 bg-[#1E6FD9] hover:bg-[#185EC0] text-white font-mono text-xs font-semibold"
+            className="px-4 py-1.5 bg-[#111111] hover:bg-[#185EC0] text-white font-mono text-xs font-semibold"
           >
             {expanded ? 'Hide Comparison Table' : 'Compare Side-by-Side ↑'}
           </button>
@@ -75,19 +75,19 @@ export const CompareDrawer: React.FC<CompareDrawerProps> = ({ products }) => {
                       <div className="flex items-center justify-between">
                         <Link
                           to={`/product/${p.id}`}
-                          className="font-display font-bold text-sm text-[var(--text-primary)] hover:text-[var(--glow)]"
+                          className="font-display font-medium text-sm text-[var(--text-primary)] hover:text-[var(--text-primary)]"
                         >
                           {p.model}
                         </Link>
                         <button
                           type="button"
                           onClick={() => toggleCompare(p.id)}
-                          className="text-[var(--text-muted)] hover:text-red-400"
+                          className="text-[var(--text-muted)] hover:text-red-700"
                         >
                           <X className="w-4 h-4" />
                         </button>
                       </div>
-                      <div className="text-[11px] text-[#1E6FD9] mt-0.5">{p.itemNo}</div>
+                      <div className="text-[11px] text-[#111111] mt-0.5">{p.itemNo}</div>
                     </th>
                   ))}
                 </tr>
@@ -177,7 +177,7 @@ export const CompareDrawer: React.FC<CompareDrawerProps> = ({ products }) => {
                       <button
                         type="button"
                         onClick={() => addItem(p)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#1E6FD9] text-white text-[11px]"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#111111] text-white text-[11px]"
                       >
                         <Plus className="w-3 h-3" /> Inquiry
                       </button>

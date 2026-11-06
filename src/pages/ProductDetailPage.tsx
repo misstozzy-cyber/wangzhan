@@ -130,7 +130,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
                 onClick={() => setActiveTab('hero')}
                 className={`px-3.5 py-2 border transition-colors ${
                   activeTab === 'hero'
-                    ? 'border-[#1E6FD9] bg-[#1E6FD9] text-white font-semibold'
+                    ? 'border-[#111111] bg-[#111111] text-white font-semibold'
                     : 'border-[var(--border-hairline)] bg-[var(--bg-elevated)] text-[var(--text-secondary)]'
                 }`}
               >
@@ -141,7 +141,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
                 onClick={() => setActiveTab('section')}
                 className={`px-3.5 py-2 border transition-colors ${
                   activeTab === 'section'
-                    ? 'border-[#1E6FD9] bg-[#1E6FD9] text-white font-semibold'
+                    ? 'border-[#111111] bg-[#111111] text-white font-semibold'
                     : 'border-[var(--border-hairline)] bg-[var(--bg-elevated)] text-[var(--text-secondary)]'
                 }`}
               >
@@ -152,7 +152,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
                 onClick={() => setActiveTab('specsheet')}
                 className={`px-3.5 py-2 border transition-colors ${
                   activeTab === 'specsheet'
-                    ? 'border-[#1E6FD9] bg-[#1E6FD9] text-white font-semibold'
+                    ? 'border-[#111111] bg-[#111111] text-white font-semibold'
                     : 'border-[var(--border-hairline)] bg-[var(--bg-elevated)] text-[var(--text-secondary)]'
                 }`}
               >
@@ -163,7 +163,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
                 onClick={() => setActiveTab('curve')}
                 className={`px-3.5 py-2 border transition-colors ${
                   activeTab === 'curve'
-                    ? 'border-[#1E6FD9] bg-[#1E6FD9] text-white font-semibold'
+                    ? 'border-[#111111] bg-[#111111] text-white font-semibold'
                     : 'border-[var(--border-hairline)] bg-[var(--bg-elevated)] text-[var(--text-secondary)]'
                 }`}
               >
@@ -229,11 +229,11 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
           {/* Right Product Configurator & RFQ Actions (5 cols) */}
           <div className="lg:col-span-5 p-6 sm:p-8 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] space-y-6">
             <div className="border-b border-[var(--border-hairline)] pb-4 space-y-1.5">
-              <div className="flex items-center justify-between font-mono text-xs text-[#1E6FD9]">
+              <div className="flex items-center justify-between font-mono text-xs text-[#111111]">
                 <span>{product.family.toUpperCase()} · {product.series.toUpperCase()}</span>
                 <span>{product.ip}</span>
               </div>
-              <h1 className="font-display font-bold text-2xl sm:text-3xl text-[var(--text-primary)]">
+              <h1 className="font-display font-medium text-2xl sm:text-3xl text-[var(--text-primary)]">
                 {product.model}
               </h1>
               <div className="font-mono text-xs text-[var(--text-muted)]">
@@ -261,7 +261,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
                       onClick={() => handleCctSelect(cct)}
                       className={`px-3 py-1.5 font-mono text-xs border transition-all ${
                         active
-                          ? 'border-[var(--glow)] bg-[var(--bg-primary)] text-[var(--text-primary)] font-semibold glow-box'
+                          ? 'border-[var(--text-primary)] bg-[var(--bg-primary)] text-[var(--text-primary)] font-semibold glow-box'
                           : 'border-[var(--border-hairline)] bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:border-white/30'
                       }`}
                     >
@@ -288,7 +288,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
                         onClick={() => setSelectedWatt(label)}
                         className={`px-2.5 py-1.5 font-mono text-xs border ${
                           selectedWatt === label
-                            ? 'border-[#1E6FD9] bg-[#1E6FD9]/15 text-[var(--text-primary)] font-semibold'
+                            ? 'border-[#111111] bg-[#111111]/15 text-[var(--text-primary)] font-semibold'
                             : 'border-[var(--border-hairline)] bg-[var(--bg-primary)] text-[var(--text-secondary)]'
                         }`}
                       >
@@ -361,7 +361,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
                     qty,
                   })
                 }
-                className="flex-1 py-3.5 px-5 bg-[#1E6FD9] hover:bg-[#185EC0] text-white font-mono text-xs font-semibold flex items-center justify-center gap-2"
+                className="flex-1 py-3.5 px-5 bg-[#111111] hover:bg-[#185EC0] text-white font-mono text-xs font-semibold flex items-center justify-center gap-2"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add to Inquiry Basket</span>
@@ -371,9 +371,9 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
                 href={product.downloads.datasheet}
                 target="_blank"
                 rel="noreferrer"
-                className="py-3.5 px-5 bg-[var(--bg-primary)] hover:border-[var(--glow)] border border-[var(--border-hairline)] text-[var(--text-primary)] font-mono text-xs font-semibold flex items-center justify-center gap-2"
+                className="py-3.5 px-5 bg-[var(--bg-primary)] hover:border-[var(--text-primary)] border border-[var(--border-hairline)] text-[var(--text-primary)] font-mono text-xs font-semibold flex items-center justify-center gap-2"
               >
-                <FileText className="w-4 h-4 text-[#1E6FD9]" />
+                <FileText className="w-4 h-4 text-[#111111]" />
                 <span>Datasheet PDF</span>
               </a>
             </div>
@@ -382,7 +382,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
             <ul className="space-y-2 pt-3 border-t border-[var(--border-hairline)] text-xs text-[var(--text-secondary)]">
               {product.features.map((feat, i) => (
                 <li key={i} className="flex items-start gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0 mt-0.5" />
                   <span>{feat}</span>
                 </li>
               ))}
@@ -393,7 +393,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
         {/* 2. Interactive Exploded Structural View & Synchronized Spec Table */}
         <section className="pt-8 border-t border-[var(--border-hairline)] space-y-8">
           <div>
-            <h2 className="font-display font-bold text-2xl sm:text-3xl text-[var(--text-primary)]">
+            <h2 className="font-display font-medium text-2xl sm:text-3xl text-[var(--text-primary)]">
               Exploded Structural Architecture & Telemetry
             </h2>
             <p className="text-sm text-[var(--text-secondary)] mt-1">
@@ -413,15 +413,15 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
                     onClick={() => setActiveLayer(layer.id)}
                     className={`w-full text-left p-5 border transition-all duration-300 ${
                       isSelected
-                        ? 'bg-[var(--bg-elevated)] border-[var(--glow)] glow-box translate-x-1.5'
+                        ? 'bg-[var(--bg-elevated)] border-[var(--text-primary)] glow-box translate-x-1.5'
                         : 'bg-[var(--bg-primary)] border-[var(--border-hairline)] hover:border-white/25'
                     }`}
                   >
-                    <div className="flex items-center justify-between font-mono text-[11px] text-[#1E6FD9]">
+                    <div className="flex items-center justify-between font-mono text-[11px] text-[#111111]">
                       <span>{layer.code}</span>
                       <Layers className="w-3.5 h-3.5" />
                     </div>
-                    <div className="font-display font-bold text-base text-[var(--text-primary)] mt-1">
+                    <div className="font-display font-medium text-base text-[var(--text-primary)] mt-1">
                       {layer.title}
                     </div>
                     <p className="text-xs text-[var(--text-secondary)] mt-1.5 leading-relaxed">
@@ -438,7 +438,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
                 <span className="font-semibold text-[var(--text-primary)]">
                   ENGINEERING SPECIFICATION TABLE
                 </span>
-                <span className="text-[#1E6FD9]">{product.itemNo}</span>
+                <span className="text-[#111111]">{product.itemNo}</span>
               </div>
 
               <dl className="divide-y divide-[var(--border-hairline)] font-mono text-xs">
@@ -505,7 +505,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
                       key={row.label}
                       className={`px-5 py-3 grid grid-cols-1 sm:grid-cols-12 gap-2 transition-colors ${
                         highlighted
-                          ? 'bg-[#1E6FD9]/15 text-[var(--text-primary)]'
+                          ? 'bg-[#111111]/15 text-[var(--text-primary)]'
                           : 'text-[var(--text-secondary)]'
                       }`}
                     >
@@ -526,14 +526,14 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
           <section className="pt-8 border-t border-[var(--border-hairline)] space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
-                <h2 className="font-display font-bold text-2xl text-[var(--text-primary)]">
+                <h2 className="font-display font-medium text-2xl text-[var(--text-primary)]">
                   End Caps, Mounting Profiles & Installation Precautions
                 </h2>
                 <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1">
                   Extracted directly from the official TYRIA engineering specification manual for {product.model}.
                 </p>
               </div>
-              <span className="font-mono text-xs text-amber-400 flex items-center gap-1.5">
+              <span className="font-mono text-xs text-amber-700 flex items-center gap-1.5">
                 <AlertTriangle className="w-4 h-4" />
                 Follow two-person installation guidelines for runs &gt; 5m
               </span>
@@ -567,7 +567,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
         >
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
-              <h2 className="font-display font-bold text-2xl text-[var(--text-primary)]">
+              <h2 className="font-display font-medium text-2xl text-[var(--text-primary)]">
                 Photometric IES / LDT & Specification Downloads
               </h2>
               <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1">
@@ -576,7 +576,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
             </div>
             <Link
               to="/designer-hub"
-              className="font-mono text-xs text-[#1E6FD9] hover:underline"
+              className="font-mono text-xs text-[#111111] hover:underline"
             >
               Browse All 259 IES Files in Designer Hub →
             </Link>
@@ -588,20 +588,20 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
               href={product.downloads.datasheet}
               target="_blank"
               rel="noreferrer"
-              className="p-5 bg-[var(--bg-elevated)] border border-[#1E6FD9]/50 hover:border-[#1E6FD9] flex flex-col justify-between gap-4"
+              className="p-5 bg-[var(--bg-elevated)] border border-[#111111]/50 hover:border-[#111111] flex flex-col justify-between gap-4"
             >
               <div>
-                <span className="font-mono text-[10px] text-[#1E6FD9] block">
+                <span className="font-mono text-[10px] text-[#111111] block">
                   OFFICIAL DATASHEET (PDF)
                 </span>
-                <div className="font-display font-bold text-base text-[var(--text-primary)] mt-1">
+                <div className="font-display font-medium text-base text-[var(--text-primary)] mt-1">
                   {product.model} Specification
                 </div>
                 <p className="text-xs text-[var(--text-secondary)] mt-1">
                   Full electrical tables, cross-section drawings, end caps, wiring, and installation instructions.
                 </p>
               </div>
-              <div className="inline-flex items-center gap-1.5 font-mono text-xs text-[#1E6FD9] font-semibold">
+              <div className="inline-flex items-center gap-1.5 font-mono text-xs text-[#111111] font-semibold">
                 <FileText className="w-4 h-4" />
                 <span>Download PDF Datasheet →</span>
               </div>
@@ -618,7 +618,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
                     className="p-5 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] flex flex-col justify-between gap-4"
                   >
                     <div>
-                      <span className="font-mono text-[10px] text-[var(--glow)] block">
+                      <span className="font-mono text-[10px] text-[var(--text-primary)] block">
                         PHOTOMETRIC PACKAGE · {ies.cct} · {ies.watt}
                       </span>
                       <div className="font-mono font-semibold text-xs text-[var(--text-primary)] mt-1 break-all">
@@ -630,7 +630,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
                       <a
                         href={ies.url}
                         download
-                        className="px-2.5 py-1 bg-[#1E6FD9] text-white flex items-center gap-1"
+                        className="px-2.5 py-1 bg-[#111111] text-white flex items-center gap-1"
                       >
                         <Download className="w-3 h-3" /> .IES
                       </a>
@@ -660,8 +660,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
             ) : (
               <div className="md:col-span-3 p-5 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="space-y-1">
-                  <div className="font-display font-semibold text-sm text-[var(--text-primary)] flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-[#1E6FD9]" />
+                  <div className="font-display font-medium text-sm text-[var(--text-primary)] flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-[#111111]" />
                     <span>Custom CCT & Wattage IES Photometric Files Available</span>
                   </div>
                   <p className="text-xs text-[var(--text-secondary)]">
@@ -670,7 +670,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
                 </div>
                 <Link
                   to="/designer-hub"
-                  className="px-4 py-2 bg-[#1E6FD9] text-white font-mono text-xs shrink-0"
+                  className="px-4 py-2 bg-[#111111] text-white font-mono text-xs shrink-0"
                 >
                   Open Designer Hub →
                 </Link>
@@ -682,7 +682,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
         {/* 5. Related Models */}
         {relatedModels.length > 0 && (
           <section className="pt-8 border-t border-[var(--border-hairline)] space-y-5">
-            <h2 className="font-display font-bold text-xl text-[var(--text-primary)]">
+            <h2 className="font-display font-medium text-xl text-[var(--text-primary)]">
               Related Architectural Profiles
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -690,10 +690,10 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
                 <Link
                   key={rm.id}
                   to={`/product/${rm.id}`}
-                  className="p-4 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] hover:border-[var(--glow)] flex items-center justify-between gap-3"
+                  className="p-4 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] hover:border-[var(--text-primary)] flex items-center justify-between gap-3"
                 >
                   <div>
-                    <div className="font-display font-bold text-sm text-[var(--text-primary)]">
+                    <div className="font-display font-medium text-sm text-[var(--text-primary)]">
                       {rm.model}
                     </div>
                     <div className="font-mono text-[11px] text-[var(--text-muted)]">

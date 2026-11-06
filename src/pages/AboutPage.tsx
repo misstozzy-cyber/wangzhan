@@ -16,7 +16,7 @@ export const AboutPage: React.FC = () => {
         {/* Top Section */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start pb-12 border-b border-[var(--border-hairline)]">
           <div className="lg:col-span-7 space-y-5">
-            <h1 className="font-display font-bold text-3xl sm:text-5xl tracking-tight text-[var(--text-primary)]">
+            <h1 className="font-display font-medium text-3xl sm:text-5xl tracking-tight text-[var(--text-primary)]">
               Engineering Linear Light for Architectural Permanence
             </h1>
             <p className="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed max-w-[65ch]">
@@ -54,8 +54,8 @@ export const AboutPage: React.FC = () => {
         {/* 3 Core Pillars */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="p-6 sm:p-8 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] space-y-3">
-            <Wrench className="w-6 h-6 text-[var(--glow)]" />
-            <h2 className="font-display font-bold text-xl text-[var(--text-primary)]">
+            <Wrench className="w-6 h-6 text-[var(--text-primary)]" />
+            <h2 className="font-display font-medium text-xl text-[var(--text-primary)]">
               Custom Tooling & Co-Extrusion R&D
             </h2>
             <p className="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
@@ -64,8 +64,8 @@ export const AboutPage: React.FC = () => {
           </div>
 
           <div className="p-6 sm:p-8 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] space-y-3">
-            <ShieldCheck className="w-6 h-6 text-[#1E6FD9]" />
-            <h2 className="font-display font-bold text-xl text-[var(--text-primary)]">
+            <ShieldCheck className="w-6 h-6 text-[#111111]" />
+            <h2 className="font-display font-medium text-xl text-[var(--text-primary)]">
               Batch-to-Batch 1-Bin Consistency
             </h2>
             <p className="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
@@ -74,8 +74,8 @@ export const AboutPage: React.FC = () => {
           </div>
 
           <div className="p-6 sm:p-8 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] space-y-3">
-            <Globe className="w-6 h-6 text-emerald-400" />
-            <h2 className="font-display font-bold text-xl text-[var(--text-primary)]">
+            <Globe className="w-6 h-6 text-emerald-700" />
+            <h2 className="font-display font-medium text-xl text-[var(--text-primary)]">
               Project Cut-to-Length Pre-Assembly
             </h2>
             <p className="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
@@ -87,7 +87,7 @@ export const AboutPage: React.FC = () => {
         {/* Bottom CTA */}
         <div className="p-8 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div className="space-y-1">
-            <h3 className="font-display font-bold text-xl text-[var(--text-primary)]">
+            <h3 className="font-display font-medium text-xl text-[var(--text-primary)]">
               Ready to Audit Our Factory or Request Samples?
             </h3>
             <p className="text-xs sm:text-sm text-[var(--text-secondary)]">
@@ -103,7 +103,7 @@ export const AboutPage: React.FC = () => {
             </Link>
             <Link
               to="/contact"
-              className="px-5 py-2.5 bg-[#1E6FD9] hover:bg-[#185EC0] text-white font-mono text-xs font-semibold flex items-center gap-1.5"
+              className="px-5 py-2.5 bg-[#111111] hover:bg-[#185EC0] text-white font-mono text-xs font-semibold flex items-center gap-1.5"
             >
               <span>Contact Engineering Team</span>
               <ArrowRight className="w-3.5 h-3.5" />

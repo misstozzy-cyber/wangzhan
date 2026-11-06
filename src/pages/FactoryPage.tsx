@@ -72,7 +72,7 @@ export const FactoryPage: React.FC<FactoryPageProps> = ({
         {/* Top Hero */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end pb-8 border-b border-[var(--border-hairline)]">
           <div className="lg:col-span-8 space-y-3">
-            <h1 className="font-display font-bold text-3xl sm:text-5xl tracking-tight text-[var(--text-primary)]">
+            <h1 className="font-display font-medium text-3xl sm:text-5xl tracking-tight text-[var(--text-primary)]">
               From LED Chip to Co-Extruded Reel
             </h1>
             <p className="text-sm sm:text-base text-[var(--text-secondary)] max-w-[68ch] leading-relaxed">
@@ -84,12 +84,12 @@ export const FactoryPage: React.FC<FactoryPageProps> = ({
             <div className="p-4 bg-[var(--bg-elevated)] border border-[var(--border-hairline)]">
               <span className="text-[10px] text-[var(--text-muted)] block">WORKSHOP AREA</span>
               <span className="text-xl font-bold text-[var(--text-primary)]">11,000 m²</span>
-              <span className="text-[10px] text-[#1E6FD9] block mt-0.5">2 Shenzhen Bases</span>
+              <span className="text-[10px] text-[#111111] block mt-0.5">2 Shenzhen Bases</span>
             </div>
             <div className="p-4 bg-[var(--bg-elevated)] border border-[var(--border-hairline)]">
               <span className="text-[10px] text-[var(--text-muted)] block">NEON EXTRUSION</span>
               <span className="text-xl font-bold text-[var(--text-primary)]">6 Lines</span>
-              <span className="text-[10px] text-[var(--glow)] block mt-0.5">Dow SILASTIC™</span>
+              <span className="text-[10px] text-[var(--text-primary)] block mt-0.5">Dow SILASTIC™</span>
             </div>
           </div>
         </div>
@@ -97,7 +97,7 @@ export const FactoryPage: React.FC<FactoryPageProps> = ({
         {/* 1. Horizontal Scroll-Snapping Timeline: From Chip to Reel */}
         <section className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="font-display font-bold text-2xl sm:text-3xl text-[var(--text-primary)]">
+            <h2 className="font-display font-medium text-2xl sm:text-3xl text-[var(--text-primary)]">
               5-Stage Vertically Integrated Production
             </h2>
             <span className="font-mono text-xs text-[var(--text-muted)]">
@@ -137,13 +137,13 @@ export const FactoryPage: React.FC<FactoryPageProps> = ({
 
                   <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
                     <div>
-                      <div className="font-mono text-xs font-bold text-[#1E6FD9]">
+                      <div className="font-mono text-xs font-bold text-[#111111]">
                         {stage.code}
                       </div>
-                      <h3 className="font-display font-bold text-base text-[var(--text-primary)] mt-1">
+                      <h3 className="font-display font-medium text-base text-[var(--text-primary)] mt-1">
                         {stage.title}
                       </h3>
-                      <div className="font-mono text-[11px] text-[var(--glow)] mt-0.5">
+                      <div className="font-mono text-[11px] text-[var(--text-primary)] mt-0.5">
                         {stage.subtitle}
                       </div>
                       <p className="text-xs text-[var(--text-secondary)] mt-2 leading-relaxed">
@@ -160,7 +160,7 @@ export const FactoryPage: React.FC<FactoryPageProps> = ({
         {/* 2. In-House Laboratory & Workshop Gallery (Extracted from Official Catalogue) */}
         <section className="space-y-6 pt-8 border-t border-[var(--border-hairline)]">
           <div>
-            <h2 className="font-display font-bold text-2xl sm:text-3xl text-[var(--text-primary)]">
+            <h2 className="font-display font-medium text-2xl sm:text-3xl text-[var(--text-primary)]">
               In-House Reliability & Photometric Testing Laboratory
             </h2>
             <p className="text-sm text-[var(--text-secondary)] mt-1 max-w-[66ch]">
@@ -175,7 +175,7 @@ export const FactoryPage: React.FC<FactoryPageProps> = ({
                 key={sheet.id}
                 type="button"
                 onClick={() => setLightboxAsset(sheet)}
-                className="group bg-[var(--bg-elevated)] border border-[var(--border-hairline)] p-3 text-left space-y-2 hover:border-[var(--glow)] transition-all"
+                className="group bg-[var(--bg-elevated)] border border-[var(--border-hairline)] p-3 text-left space-y-2 hover:border-[var(--text-primary)] transition-all"
               >
                 <div className="h-56 bg-[#07080B] overflow-hidden relative">
                   <img
@@ -202,7 +202,7 @@ export const FactoryPage: React.FC<FactoryPageProps> = ({
                 key={item.id}
                 type="button"
                 onClick={() => setLightboxAsset(item)}
-                className="group bg-[var(--bg-elevated)] border border-[var(--border-hairline)] overflow-hidden text-left hover:border-[#1E6FD9] transition-all"
+                className="group bg-[var(--bg-elevated)] border border-[var(--border-hairline)] overflow-hidden text-left hover:border-[#111111] transition-all"
               >
                 <div className="h-32 bg-[#07080B] overflow-hidden relative">
                   <img
@@ -224,8 +224,8 @@ export const FactoryPage: React.FC<FactoryPageProps> = ({
         <section className="space-y-6 pt-8 border-t border-[var(--border-hairline)]">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
-              <h2 className="font-display font-bold text-2xl sm:text-3xl text-[var(--text-primary)] flex items-center gap-2">
-                <Award className="w-6 h-6 text-[#1E6FD9]" />
+              <h2 className="font-display font-medium text-2xl sm:text-3xl text-[var(--text-primary)] flex items-center gap-2">
+                <Award className="w-6 h-6 text-[#111111]" />
                 <span>International Compliance & Quality Certifications</span>
               </h2>
               <p className="text-sm text-[var(--text-secondary)] mt-1">
@@ -240,7 +240,7 @@ export const FactoryPage: React.FC<FactoryPageProps> = ({
                 key={cert.id}
                 type="button"
                 onClick={() => setLightboxAsset(cert)}
-                className="group p-3 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] hover:border-[var(--glow)] text-left flex flex-col justify-between gap-2 transition-all"
+                className="group p-3 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] hover:border-[var(--text-primary)] text-left flex flex-col justify-between gap-2 transition-all"
               >
                 <div className="h-52 bg-[#07080B] flex items-center justify-center overflow-hidden relative p-2">
                   <img
@@ -264,14 +264,14 @@ export const FactoryPage: React.FC<FactoryPageProps> = ({
         {/* 4. Two Shenzhen Manufacturing Bases */}
         <section className="pt-8 border-t border-[var(--border-hairline)] grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="p-6 sm:p-8 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] space-y-4">
-            <div className="flex items-center justify-between font-mono text-xs text-[#1E6FD9]">
+            <div className="flex items-center justify-between font-mono text-xs text-[#111111]">
               <span className="flex items-center gap-1.5 font-semibold">
                 <MapPin className="w-4 h-4" />
                 FACTORY 1 (SHAJING HQ & SILICONE CO-EXTRUSION)
               </span>
               <span>BAO&apos;AN, SHENZHEN</span>
             </div>
-            <h3 className="font-display font-bold text-xl text-[var(--text-primary)]">
+            <h3 className="font-display font-medium text-xl text-[var(--text-primary)]">
               Antonio Technology Park Base (F1)
             </h3>
             <p className="text-xs sm:text-sm text-[var(--text-secondary)]">
@@ -279,29 +279,29 @@ export const FactoryPage: React.FC<FactoryPageProps> = ({
             </p>
             <ul className="space-y-1.5 font-mono text-xs text-[var(--text-primary)] pt-2">
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
                 <span>6 Silicone Neon Flex Co-Extrusion Production Lines</span>
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
                 <span>CNAS-Standard Photometric Darkroom & Integrating Sphere Lab</span>
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
                 <span>Global Engineering Showroom & Sample Dispatch Center</span>
               </li>
             </ul>
           </div>
 
           <div className="p-6 sm:p-8 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] space-y-4">
-            <div className="flex items-center justify-between font-mono text-xs text-[#1E6FD9]">
+            <div className="flex items-center justify-between font-mono text-xs text-[#111111]">
               <span className="flex items-center gap-1.5 font-semibold">
                 <MapPin className="w-4 h-4" />
                 FACTORY 2 (SHIYAN SMD PACKAGING & SMT BASE)
               </span>
               <span>BAO&apos;AN, SHENZHEN</span>
             </div>
-            <h3 className="font-display font-bold text-xl text-[var(--text-primary)]">
+            <h3 className="font-display font-medium text-xl text-[var(--text-primary)]">
               Shancheng Industrial Zone Base (F2)
             </h3>
             <p className="text-xs sm:text-sm text-[var(--text-secondary)]">
@@ -309,15 +309,15 @@ export const FactoryPage: React.FC<FactoryPageProps> = ({
             </p>
             <ul className="space-y-1.5 font-mono text-xs text-[var(--text-primary)] pt-2">
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
                 <span>In-House SMD LED Packaging & 1-Bin Sorting Workshop</span>
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
                 <span>High-Speed Automated SMT & COB Flip-Chip Encapsulation</span>
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
                 <span>High-Volume LED Strip & Backlit LED Sheet Production</span>
               </li>
             </ul>

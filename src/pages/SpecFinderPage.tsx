@@ -162,7 +162,7 @@ export const SpecFinderPage: React.FC<SpecFinderPageProps> = ({ products }) => {
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b border-[var(--border-hairline)]">
           <div>
-            <h1 className="font-display font-bold text-3xl sm:text-4xl tracking-tight text-[var(--text-primary)]">
+            <h1 className="font-display font-medium text-3xl sm:text-4xl tracking-tight text-[var(--text-primary)]">
               Spec Finder — Engineering Parameter Database
             </h1>
             <p className="text-sm text-[var(--text-secondary)] mt-2 max-w-[68ch]">
@@ -182,7 +182,7 @@ export const SpecFinderPage: React.FC<SpecFinderPageProps> = ({ products }) => {
             <button
               type="button"
               onClick={handleExportCSV}
-              className="px-4 py-2.5 bg-[#1E6FD9] hover:bg-[#185EC0] text-white font-mono text-xs font-semibold flex items-center gap-2"
+              className="px-4 py-2.5 bg-[#111111] hover:bg-[#185EC0] text-white font-mono text-xs font-semibold flex items-center gap-2"
             >
               <Download className="w-4 h-4" />
               <span>Export CSV ({filteredAndSorted.length} Models)</span>
@@ -317,7 +317,7 @@ export const SpecFinderPage: React.FC<SpecFinderPageProps> = ({ products }) => {
                   <tr
                     key={p.id}
                     className={`transition-colors hover:bg-[var(--bg-primary)] ${
-                      isSelected ? 'bg-[#1E6FD9]/10' : ''
+                      isSelected ? 'bg-[#111111]/10' : ''
                     }`}
                   >
                     <td className="py-2.5 px-3 text-center">
@@ -326,7 +326,7 @@ export const SpecFinderPage: React.FC<SpecFinderPageProps> = ({ products }) => {
                         onClick={() => toggleCompare(p.id)}
                         className={`p-1.5 border ${
                           isSelected
-                            ? 'border-[#1E6FD9] bg-[#1E6FD9] text-white'
+                            ? 'border-[#111111] bg-[#111111] text-white'
                             : 'border-[var(--border-hairline)] text-[var(--text-muted)] hover:text-white'
                         }`}
                         title="Toggle side-by-side comparison"
@@ -346,11 +346,11 @@ export const SpecFinderPage: React.FC<SpecFinderPageProps> = ({ products }) => {
                     <td className="py-2.5 px-3">
                       <Link
                         to={`/product/${p.id}`}
-                        className="font-display font-bold text-sm text-[var(--text-primary)] hover:text-[var(--glow)] block"
+                        className="font-display font-medium text-sm text-[var(--text-primary)] hover:text-[var(--text-primary)] block"
                       >
                         {p.model}
                       </Link>
-                      <span className="text-[11px] text-[#1E6FD9]">{p.itemNo}</span>
+                      <span className="text-[11px] text-[#111111]">{p.itemNo}</span>
                     </td>
                     <td className="py-2.5 px-3">
                       <div className="text-[var(--text-primary)]">{p.series}</div>
@@ -380,12 +380,12 @@ export const SpecFinderPage: React.FC<SpecFinderPageProps> = ({ products }) => {
                         className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-[var(--bg-primary)] border border-[var(--border-hairline)] hover:border-white/30 text-[11px]"
                         title="Open Specification PDF"
                       >
-                        <FileText className="w-3 h-3 text-[#1E6FD9]" /> PDF
+                        <FileText className="w-3 h-3 text-[#111111]" /> PDF
                       </a>
                       <button
                         type="button"
                         onClick={() => addItem(p)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-[#1E6FD9] hover:bg-[#185EC0] text-white text-[11px] font-semibold"
+                        className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-[#111111] hover:bg-[#185EC0] text-white text-[11px] font-semibold"
                       >
                         <Plus className="w-3 h-3" /> RFQ
                       </button>

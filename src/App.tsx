@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import Lenis from 'lenis';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { GlowProvider } from './context/GlowContext';
 import { InquiryProvider } from './context/InquiryContext';
@@ -30,10 +31,32 @@ const iesLibrary = iesLibraryData as PhotometricEntry[];
 const factoryAssets = (factoryCertsData.factory || []) as FactoryAsset[];
 const certificateAssets = (factoryCertsData.certificates || []) as FactoryAsset[];
 
+let lenis: Lenis | null = null;
+
+const SmoothScroll: React.FC = () => {
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    lenis = new Lenis({ duration: 1.15, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+    let raf = 0;
+    const loop = (time: number) => {
+      lenis?.raf(time);
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => {
+      cancelAnimationFrame(raf);
+      lenis?.destroy();
+      lenis = null;
+    };
+  }, []);
+  return null;
+};
+
 const ScrollToTop: React.FC = () => {
   const { pathname } = useLocation();
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (lenis) lenis.scrollTo(0, { immediate: true });
+    else window.scrollTo(0, 0);
   }, [pathname]);
   return null;
 };
@@ -43,6 +66,7 @@ export const App: React.FC = () => {
     <GlowProvider>
       <InquiryProvider>
         <BrowserRouter>
+          <SmoothScroll />
           <ScrollToTop />
           <div className="min-h-screen flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)]">
             <Header />

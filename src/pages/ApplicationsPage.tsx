@@ -104,7 +104,7 @@ export const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ products }) 
       <section className="py-20">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8 space-y-12">
           <div>
-            <h2 className="font-display font-bold text-3xl sm:text-4xl text-[var(--text-primary)]">
+            <h2 className="font-display font-medium text-3xl sm:text-4xl text-[var(--text-primary)]">
               Application Engineering Guides by Sector
             </h2>
             <p className="text-sm sm:text-base text-[var(--text-secondary)] mt-2 max-w-[66ch]">
@@ -119,8 +119,8 @@ export const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ products }) 
                 className="p-6 sm:p-8 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] flex flex-col justify-between gap-6 glow-border-hover"
               >
                 <div className="space-y-3">
-                  <div className="font-mono text-xs text-[#1E6FD9]">{sec.env}</div>
-                  <h3 className="font-display font-bold text-xl text-[var(--text-primary)]">
+                  <div className="font-mono text-xs text-[#111111]">{sec.env}</div>
+                  <h3 className="font-display font-medium text-xl text-[var(--text-primary)]">
                     {sec.title}
                   </h3>
                   <p className="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
@@ -137,9 +137,9 @@ export const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ products }) 
                       <li key={rec.label}>
                         <Link
                           to={rec.link}
-                          className="inline-flex items-center gap-2 text-xs font-mono text-[var(--text-primary)] hover:text-[var(--glow)] transition-colors"
+                          className="inline-flex items-center gap-2 text-xs font-mono text-[var(--text-primary)] hover:text-[var(--text-primary)] transition-colors"
                         >
-                          <CheckCircle2 className="w-3.5 h-3.5 text-[#1E6FD9]" />
+                          <CheckCircle2 className="w-3.5 h-3.5 text-[#111111]" />
                           <span>{rec.label}</span>
                           <ArrowUpRight className="w-3 h-3 opacity-70" />
                         </Link>

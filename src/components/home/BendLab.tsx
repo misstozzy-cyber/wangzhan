@@ -165,7 +165,7 @@ export const BendLab: React.FC<BendLabProps> = ({ products }) => {
         {/* Top Heading */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
           <div>
-            <h2 className="font-display font-bold text-3xl sm:text-4xl tracking-tight text-[var(--text-primary)]">
+            <h2 className="font-display font-medium text-3xl sm:text-4xl tracking-tight text-[var(--text-primary)]">
               Interactive Bend Radius Laboratory
             </h2>
             <p className="text-sm sm:text-base text-[var(--text-secondary)] mt-2 max-w-[66ch]">
@@ -180,7 +180,7 @@ export const BendLab: React.FC<BendLabProps> = ({ products }) => {
               onClick={() => handleModeSwitch('TV')}
               className={`px-3.5 py-2 transition-colors ${
                 bendMode === 'TV'
-                  ? 'bg-[#1E6FD9] text-white font-semibold'
+                  ? 'bg-[#111111] text-white font-semibold'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
               }`}
             >
@@ -191,7 +191,7 @@ export const BendLab: React.FC<BendLabProps> = ({ products }) => {
               onClick={() => handleModeSwitch('SV')}
               className={`px-3.5 py-2 transition-colors ${
                 bendMode === 'SV'
-                  ? 'bg-[#1E6FD9] text-white font-semibold'
+                  ? 'bg-[#111111] text-white font-semibold'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
               }`}
             >
@@ -202,7 +202,7 @@ export const BendLab: React.FC<BendLabProps> = ({ products }) => {
               onClick={() => handleModeSwitch('3D')}
               className={`px-3.5 py-2 transition-colors ${
                 bendMode === '3D'
-                  ? 'bg-[#1E6FD9] text-white font-semibold'
+                  ? 'bg-[#111111] text-white font-semibold'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
               }`}
             >
@@ -219,12 +219,12 @@ export const BendLab: React.FC<BendLabProps> = ({ products }) => {
             <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-white/10 font-mono text-xs">
               <div className="flex items-center gap-2">
                 {isOverbent ? (
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-500/15 border border-red-500/50 text-red-400 font-semibold">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-500/15 border border-red-500/50 text-red-700 font-semibold">
                     <AlertTriangle className="w-3.5 h-3.5" />
                     TOO TIGHT — MIN. RADIUS {selectedModel.minBendRadius}mm (Ø{selectedModel.minBendDiameter}mm) FOR {selectedModel.model}
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/15 border border-emerald-500/40 text-emerald-300">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/15 border border-emerald-500/40 text-emerald-700">
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     SAFE BENDING GEOMETRY · CURRENT MIN. R = {minRadiusMm}mm ≥ {selectedModel.minBendRadius}mm
                   </span>
@@ -308,7 +308,7 @@ export const BendLab: React.FC<BendLabProps> = ({ products }) => {
                   cy={tightestPoint.y}
                   r={Math.min(95, Math.max(16, minRadiusMm / 2.2))}
                   fill="none"
-                  stroke={isOverbent ? '#EF4444' : '#1E6FD9'}
+                  stroke={isOverbent ? '#EF4444' : '#111111'}
                   strokeWidth="1.5"
                   strokeDasharray="3 3"
                 />
@@ -338,7 +338,7 @@ export const BendLab: React.FC<BendLabProps> = ({ products }) => {
                     cy={pt.y}
                     r={13}
                     fill="#0D0F14"
-                    stroke={draggingIdx === idx ? 'var(--glow)' : '#1E6FD9'}
+                    stroke={draggingIdx === idx ? 'var(--glow)' : '#111111'}
                     strokeWidth={2}
                   />
                   <text
@@ -356,7 +356,7 @@ export const BendLab: React.FC<BendLabProps> = ({ products }) => {
             {/* Bottom Instruction Bar */}
             <div className="pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 font-mono text-[11px] text-[#949BA8]">
               <span className="flex items-center gap-1.5">
-                <Move className="w-3.5 h-3.5 text-[#1E6FD9]" />
+                <Move className="w-3.5 h-3.5 text-[#111111]" />
                 DRAG CONTROL NODES P1–P4 TO SIMULATE ON-SITE CURVATURE
               </span>
               <span>
@@ -395,7 +395,7 @@ export const BendLab: React.FC<BendLabProps> = ({ products }) => {
                   <span className="text-[10px] text-[var(--text-muted)] block">CURRENT CURVE R</span>
                   <span
                     className={`text-base font-bold ${
-                      isOverbent ? 'text-red-400' : 'text-emerald-400'
+                      isOverbent ? 'text-red-700' : 'text-emerald-700'
                     }`}
                   >
                     {minRadiusMm} mm
@@ -411,7 +411,7 @@ export const BendLab: React.FC<BendLabProps> = ({ products }) => {
 
               {/* Engineering Guide Box */}
               <div className="space-y-3 pt-2 border-t border-[var(--border-hairline)] text-xs">
-                <div className="font-display font-semibold text-sm text-[var(--text-primary)]">
+                <div className="font-display font-medium text-sm text-[var(--text-primary)]">
                   How to Choose the Right Bending Orientation
                 </div>
                 <div className="space-y-2 text-[var(--text-secondary)]">
@@ -433,7 +433,7 @@ export const BendLab: React.FC<BendLabProps> = ({ products }) => {
 
             <Link
               to={`/product/${selectedModel.id}`}
-              className="w-full py-3 px-4 bg-[#1E6FD9] hover:bg-[#185EC0] text-white font-mono text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+              className="w-full py-3 px-4 bg-[#111111] hover:bg-[#185EC0] text-white font-mono text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
             >
               <span>Inspect {selectedModel.model} Datasheet & IES</span>
               <ArrowUpRight className="w-4 h-4" />

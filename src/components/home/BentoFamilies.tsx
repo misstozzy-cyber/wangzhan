@@ -135,7 +135,7 @@ export const BentoFamilies: React.FC<BentoFamiliesProps> = ({ products }) => {
         {/* Heading Row */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
-            <h2 className="font-display font-bold text-3xl sm:text-4xl tracking-tight text-[var(--text-primary)]">
+            <h2 className="font-display font-medium text-3xl sm:text-4xl tracking-tight text-[var(--text-primary)]">
               Engineered Linear Product Families
             </h2>
             <p className="text-sm sm:text-base text-[var(--text-secondary)] mt-2 max-w-[64ch]">
@@ -144,7 +144,7 @@ export const BentoFamilies: React.FC<BentoFamiliesProps> = ({ products }) => {
           </div>
           <Link
             to="/products"
-            className="font-mono text-xs text-[#1E6FD9] hover:underline flex items-center gap-1 shrink-0"
+            className="font-mono text-xs text-[#111111] hover:underline flex items-center gap-1 shrink-0"
           >
             <span>VIEW COMPLETE CATALOGUE ({products.length} MODELS)</span>
             <ArrowUpRight className="w-4 h-4" />
@@ -189,7 +189,7 @@ export const BentoFamilies: React.FC<BentoFamiliesProps> = ({ products }) => {
 
               {/* Bottom Content */}
               <div className="relative z-10 max-w-md space-y-2 pt-16">
-                <h3 className="font-display font-bold text-xl sm:text-2xl text-[#F3F5F8] group-hover:text-[var(--glow)] transition-colors flex items-center gap-2">
+                <h3 className="font-display font-medium text-xl sm:text-2xl text-[#F3F5F8] group-hover:text-[var(--text-primary)] transition-colors flex items-center gap-2">
                   <span>{tile.title}</span>
                   <ArrowUpRight className="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                 </h3>
@@ -204,7 +204,7 @@ export const BentoFamilies: React.FC<BentoFamiliesProps> = ({ products }) => {
         {/* Why Tyria Horizontal Architectural Strip */}
         <div className="pt-6">
           <div className="flex items-center justify-between mb-5">
-            <h3 className="font-display font-semibold text-lg text-[var(--text-primary)]">
+            <h3 className="font-display font-medium text-lg text-[var(--text-primary)]">
               Why Lighting Designers Specify TYRIA
             </h3>
             <span className="font-mono text-xs text-[var(--text-muted)]">
@@ -221,10 +221,10 @@ export const BentoFamilies: React.FC<BentoFamiliesProps> = ({ products }) => {
                   className="p-4 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] flex flex-col justify-between gap-3"
                 >
                   <div className="w-8 h-8 rounded-sm bg-[var(--bg-surface)] flex items-center justify-center border border-[var(--border-hairline)]">
-                    <Icon className="w-4 h-4 text-[var(--glow)]" />
+                    <Icon className="w-4 h-4 text-[var(--text-primary)]" />
                   </div>
                   <div>
-                    <div className="font-display font-semibold text-xs text-[var(--text-primary)] mb-1">
+                    <div className="font-display font-medium text-xs text-[var(--text-primary)] mb-1">
                       {item.title}
                     </div>
                     <p className="text-[11px] text-[var(--text-secondary)] leading-relaxed">

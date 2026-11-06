@@ -15,7 +15,7 @@ const GlowContext = createContext<GlowContextValue | undefined>(undefined);
 
 export const GlowProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [kelvin, setKelvin] = useState<number>(3000);
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [theme, setTheme] = useState<'dark' | 'light'>('light');
   const [isPowerOn, setIsPowerOn] = useState<boolean>(true);
 
   const color = kelvinToRGB(kelvin);
@@ -26,8 +26,8 @@ export const GlowProvider: React.FC<{ children: React.ReactNode }> = ({ children
       root.style.setProperty('--glow', color.hex);
       root.style.setProperty('--glow-rgb', color.rgbString);
     } else {
-      root.style.setProperty('--glow', '#3B4252');
-      root.style.setProperty('--glow-rgb', '59, 66, 82');
+      root.style.setProperty('--glow', '#C9C5BC');
+      root.style.setProperty('--glow-rgb', '201, 197, 188');
     }
   }, [color.hex, color.rgbString, isPowerOn]);
 

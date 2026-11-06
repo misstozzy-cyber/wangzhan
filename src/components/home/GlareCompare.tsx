@@ -16,7 +16,7 @@ export const GlareCompare: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           {/* Left Copy & Live UGR Gauge (5 cols) */}
           <div className="lg:col-span-5 space-y-6">
-            <h2 className="font-display font-bold text-3xl sm:text-4xl tracking-tight text-[var(--text-primary)]">
+            <h2 className="font-display font-medium text-3xl sm:text-4xl tracking-tight text-[var(--text-primary)]">
               Anti-Glare UGR &lt; 19 Optical Control
             </h2>
             <p className="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed">
@@ -27,14 +27,14 @@ export const GlareCompare: React.FC = () => {
             <div className="p-5 bg-[var(--bg-primary)] border border-[var(--border-hairline)] space-y-4">
               <div className="flex items-center justify-between font-mono text-xs">
                 <span className="text-[var(--text-muted)] flex items-center gap-1.5">
-                  <EyeOff className="w-4 h-4 text-[#1E6FD9]" />
+                  <EyeOff className="w-4 h-4 text-[#111111]" />
                   UNIFIED GLARE RATING (UGR)
                 </span>
                 <span
                   className={`font-bold text-sm px-2 py-0.5 border ${
                     Number(simulatedUgr) < 19
-                      ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-400'
-                      : 'border-amber-500/40 bg-amber-500/10 text-amber-400'
+                      ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-700'
+                      : 'border-amber-500/40 bg-amber-500/10 text-amber-700'
                   }`}
                 >
                   UGR {simulatedUgr} {Number(simulatedUgr) < 19 ? '(EN 12464-1 Office Pass)' : '(High Direct Glare)'}
@@ -44,14 +44,14 @@ export const GlareCompare: React.FC = () => {
               <div className="grid grid-cols-2 gap-3 font-mono text-xs pt-1">
                 <div className="p-3 bg-[var(--bg-elevated)] border border-[var(--border-hairline)]">
                   <div className="text-[10px] text-[var(--text-muted)]">STANDARD NEON</div>
-                  <div className="text-base font-bold text-amber-400 mt-0.5">UGR ~24.8</div>
+                  <div className="text-base font-bold text-amber-700 mt-0.5">UGR ~24.8</div>
                   <div className="text-[10px] text-[var(--text-secondary)] mt-0.5">
                     120° Unshielded Surface
                   </div>
                 </div>
-                <div className="p-3 bg-[var(--bg-elevated)] border border-[#1E6FD9]/50">
-                  <div className="text-[10px] text-[#1E6FD9]">TYRIA UGR&lt;19 SERIES</div>
-                  <div className="text-base font-bold text-emerald-400 mt-0.5">UGR &lt; 16.5–18.8</div>
+                <div className="p-3 bg-[var(--bg-elevated)] border border-[#111111]/50">
+                  <div className="text-[10px] text-[#111111]">TYRIA UGR&lt;19 SERIES</div>
+                  <div className="text-base font-bold text-emerald-700 mt-0.5">UGR &lt; 16.5–18.8</div>
                   <div className="text-[10px] text-[var(--text-secondary)] mt-0.5">
                     45° Shielded Baffle / Louver
                   </div>
@@ -65,7 +65,7 @@ export const GlareCompare: React.FC = () => {
 
             <Link
               to="/products/neon-flex/anti-glare"
-              className="inline-flex items-center gap-2 px-5 py-3 bg-[#1E6FD9] hover:bg-[#185EC0] text-white font-mono text-xs font-semibold"
+              className="inline-flex items-center gap-2 px-5 py-3 bg-[#111111] hover:bg-[#185EC0] text-white font-mono text-xs font-semibold"
             >
               <span>Explore All 5 Anti-Glare UGR&lt;19 Profiles</span>
               <ArrowUpRight className="w-4 h-4" />
@@ -78,7 +78,7 @@ export const GlareCompare: React.FC = () => {
               {/* Layer 1 (Right / Full Base): TYRIA Anti-Glare UGR<19 Controlled Beam */}
               <div className="absolute inset-0 flex flex-col justify-between p-8 bg-[#07080B]">
                 <div className="flex justify-end">
-                  <span className="px-3 py-1 bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 font-mono text-xs font-semibold">
+                  <span className="px-3 py-1 bg-emerald-500/15 border border-emerald-500/40 text-emerald-700 font-mono text-xs font-semibold">
                     TYRIA ANTI-GLARE UGR &lt; 19 (HONEYCOMB / DEEP BAFFLE)
                   </span>
                 </div>
@@ -126,7 +126,7 @@ export const GlareCompare: React.FC = () => {
                 className="absolute inset-0 flex flex-col justify-between p-8 bg-[#0B0D13]"
               >
                 <div>
-                  <span className="px-3 py-1 bg-amber-500/15 border border-amber-500/40 text-amber-300 font-mono text-xs font-semibold">
+                  <span className="px-3 py-1 bg-amber-500/15 border border-amber-500/40 text-amber-700 font-mono text-xs font-semibold">
                     STANDARD FLAT NEON (UGR ~24.8 UNSHIELDED)
                   </span>
                 </div>
@@ -169,9 +169,9 @@ export const GlareCompare: React.FC = () => {
               {/* Vertical Divider Handle */}
               <div
                 style={{ left: `${splitPct}%` }}
-                className="absolute top-0 bottom-0 w-0.5 bg-[#1E6FD9] pointer-events-none"
+                className="absolute top-0 bottom-0 w-0.5 bg-[#111111] pointer-events-none"
               >
-                <div className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-[#1E6FD9] text-white flex items-center justify-center shadow-lg">
+                <div className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-[#111111] text-white flex items-center justify-center shadow-lg">
                   <SlidersHorizontal className="w-4 h-4" />
                 </div>
               </div>

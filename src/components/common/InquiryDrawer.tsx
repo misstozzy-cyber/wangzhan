@@ -100,40 +100,14 @@ export const InquiryDrawer: React.FC = () => {
 
   return (
     <>
-      {/* Floating Right-Bottom Action Stack */}
-      <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-2.5">
-        <a
-          href="https://wa.me/8618938693458?text=Hello%20TYRIA%20Lighting%2C%20I%20am%20inquiring%20about%20LED%20Neon%20Flex%20and%20IES%20files."
-          target="_blank"
-          rel="noreferrer"
-          className="flex items-center gap-2 px-3.5 py-2.5 rounded-sm bg-[#16A34A] hover:bg-[#15803D] text-white font-mono text-xs font-medium shadow-lg transition-transform hover:scale-[1.02]"
-          title="Chat with TYRIA Lighting Engineers on WhatsApp"
-        >
-          <MessageCircle className="w-4 h-4" />
-          <span className="hidden sm:inline">WhatsApp Engineer</span>
-        </a>
-
-        <button
-          type="button"
-          onClick={() => {
-            setStep('list');
-            setIsDrawerOpen(true);
-          }}
-          className="flex items-center gap-2.5 px-4 py-3 rounded-sm bg-[var(--bg-elevated)] border border-[var(--border-hairline)] text-[var(--text-primary)] font-mono text-xs font-semibold shadow-2xl glow-box hover:border-[var(--glow)] transition-all"
-        >
-          <ShoppingBag className="w-4 h-4 text-[var(--glow)]" />
-          <span>RFQ Basket ({totalCount})</span>
-        </button>
-      </div>
-
       {/* Slide-Over Drawer */}
       {isDrawerOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-black/70 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex justify-end bg-[#111111]/30 backdrop-blur-sm">
           <div className="w-full max-w-xl bg-[var(--bg-elevated)] border-l border-[var(--border-hairline)] h-full flex flex-col justify-between overflow-hidden">
             {/* Drawer Header */}
             <div className="px-6 py-5 border-b border-[var(--border-hairline)] flex items-center justify-between">
               <div>
-                <h2 className="font-display font-bold text-lg text-[var(--text-primary)]">
+                <h2 className="font-display font-medium text-lg text-[var(--text-primary)]">
                   Engineering RFQ & Sample Basket
                 </h2>
                 <p className="font-mono text-xs text-[var(--text-muted)]">
@@ -157,7 +131,7 @@ export const InquiryDrawer: React.FC = () => {
                   {items.length === 0 ? (
                     <div className="h-full flex flex-col items-center justify-center text-center py-12 space-y-3">
                       <ShoppingBag className="w-10 h-10 text-[var(--text-muted)] stroke-[1.25]" />
-                      <div className="font-display font-semibold text-base text-[var(--text-primary)]">
+                      <div className="font-display font-medium text-base text-[var(--text-primary)]">
                         Your RFQ & Sample Basket is Empty
                       </div>
                       <p className="text-xs text-[var(--text-secondary)] max-w-xs">
@@ -173,17 +147,17 @@ export const InquiryDrawer: React.FC = () => {
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div>
-                              <div className="font-display font-semibold text-sm text-[var(--text-primary)]">
+                              <div className="font-display font-medium text-sm text-[var(--text-primary)]">
                                 {item.model}
                               </div>
-                              <div className="font-mono text-xs text-[#1E6FD9]">
+                              <div className="font-mono text-xs text-[#111111]">
                                 {item.itemNo} · {item.family}
                               </div>
                             </div>
                             <button
                               type="button"
                               onClick={() => removeItem(item.productId)}
-                              className="text-[var(--text-muted)] hover:text-red-400 p-1"
+                              className="text-[var(--text-muted)] hover:text-red-700 p-1"
                               title="Remove item"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -398,7 +372,7 @@ export const InquiryDrawer: React.FC = () => {
                       onChange={(e) =>
                         setFormData({ ...formData, needSample: e.target.checked })
                       }
-                      className="accent-[#1E6FD9]"
+                      className="accent-[#111111]"
                     />
                     <span>Include Free Engineering Sample Box (0.5m cut samples + end-cap kit)</span>
                   </label>
@@ -420,9 +394,9 @@ export const InquiryDrawer: React.FC = () => {
 
               {step === 'success' && (
                 <div className="py-10 space-y-5 text-center">
-                  <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto" />
+                  <CheckCircle2 className="w-12 h-12 text-emerald-700 mx-auto" />
                   <div className="space-y-1">
-                    <h3 className="font-display font-bold text-xl text-[var(--text-primary)]">
+                    <h3 className="font-display font-medium text-xl text-[var(--text-primary)]">
                       Specification Inquiry Logged
                     </h3>
                     <p className="text-xs text-[var(--text-secondary)] max-w-md mx-auto">
@@ -446,7 +420,7 @@ export const InquiryDrawer: React.FC = () => {
                     <button
                       type="button"
                       onClick={handleEmailDirect}
-                      className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#1E6FD9] hover:bg-[#185EC0] text-white font-mono text-xs font-medium"
+                      className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#111111] hover:bg-[#185EC0] text-white font-mono text-xs font-medium"
                     >
                       <Mail className="w-4 h-4" />
                       Send via Email Client
@@ -463,7 +437,7 @@ export const InquiryDrawer: React.FC = () => {
                   <button
                     type="button"
                     onClick={clearBasket}
-                    className="text-xs font-mono text-[var(--text-muted)] hover:text-red-400"
+                    className="text-xs font-mono text-[var(--text-muted)] hover:text-red-700"
                   >
                     Clear All
                   </button>
@@ -473,13 +447,13 @@ export const InquiryDrawer: React.FC = () => {
                       onClick={handleWhatsAppDirect}
                       className="px-3 py-2 border border-[var(--border-hairline)] hover:border-white/30 text-xs font-mono flex items-center gap-1.5"
                     >
-                      <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
+                      <MessageCircle className="w-3.5 h-3.5 text-emerald-700" />
                       WhatsApp List
                     </button>
                     <button
                       type="button"
                       onClick={() => setStep('form')}
-                      className="px-5 py-2 bg-[#1E6FD9] hover:bg-[#185EC0] text-white text-xs font-mono font-semibold flex items-center gap-1.5"
+                      className="px-5 py-2 bg-[#111111] hover:bg-[#185EC0] text-white text-xs font-mono font-semibold flex items-center gap-1.5"
                     >
                       <Send className="w-3.5 h-3.5" />
                       Proceed to Send Inquiry →
@@ -501,7 +475,7 @@ export const InquiryDrawer: React.FC = () => {
                     type="submit"
                     form="rfq-submit-form"
                     disabled={submitting}
-                    className="px-5 py-2 bg-[#1E6FD9] hover:bg-[#185EC0] text-white text-xs font-mono font-semibold flex items-center gap-1.5"
+                    className="px-5 py-2 bg-[#111111] hover:bg-[#185EC0] text-white text-xs font-mono font-semibold flex items-center gap-1.5"
                   >
                     <Send className="w-3.5 h-3.5" />
                     {submitting ? 'Submitting...' : 'Submit Structured RFQ'}

@@ -136,7 +136,7 @@ export const LightTheBuilding: React.FC<LightTheBuildingProps> = ({ products }) 
         {/* Top Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
           <div>
-            <h2 className="font-display font-bold text-3xl sm:text-4xl tracking-tight text-[var(--text-primary)]">
+            <h2 className="font-display font-medium text-3xl sm:text-4xl tracking-tight text-[var(--text-primary)]">
               Light the Building — Architectural Simulation
             </h2>
             <p className="text-sm sm:text-base text-[var(--text-secondary)] mt-2 max-w-[65ch]">
@@ -148,9 +148,9 @@ export const LightTheBuilding: React.FC<LightTheBuildingProps> = ({ products }) 
             <button
               type="button"
               onClick={() => toggleAllZones(true)}
-              className="px-3.5 py-2 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] hover:border-[var(--glow)] text-[var(--text-primary)] flex items-center gap-1.5"
+              className="px-3.5 py-2 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] hover:border-[var(--text-primary)] text-[var(--text-primary)] flex items-center gap-1.5"
             >
-              <Sparkles className="w-3.5 h-3.5 text-[var(--glow)]" />
+              <Sparkles className="w-3.5 h-3.5 text-[var(--text-primary)]" />
               <span>Illuminate All Zones</span>
             </button>
             <button
@@ -352,9 +352,9 @@ export const LightTheBuilding: React.FC<LightTheBuildingProps> = ({ products }) 
                     style={{ left: `${z.x}%`, top: `${z.y}%` }}
                     className={`absolute -translate-x-1/2 -translate-y-1/2 group flex items-center gap-1.5 px-2.5 py-1 rounded-sm font-mono text-[11px] border transition-all ${
                       isSelected
-                        ? 'bg-[#1E6FD9] text-white border-white shadow-lg scale-110 z-20'
+                        ? 'bg-[#111111] text-white border-white shadow-lg scale-110 z-20'
                         : isLit
-                        ? 'bg-[#0D0F14]/90 text-[#F3F5F8] border-white/30 hover:border-[var(--glow)] z-10'
+                        ? 'bg-[#0D0F14]/90 text-[#F3F5F8] border-white/30 hover:border-[var(--text-primary)] z-10'
                         : 'bg-[#07080B]/80 text-[#949BA8] border-white/15'
                     }`}
                   >
@@ -385,7 +385,7 @@ export const LightTheBuilding: React.FC<LightTheBuildingProps> = ({ products }) 
                     }}
                     className={`px-2.5 py-1 font-mono text-[11px] border transition-colors ${
                       activeZoneId === z.id
-                        ? 'border-[#1E6FD9] bg-[#1E6FD9]/20 text-white'
+                        ? 'border-[#111111] bg-[#111111]/20 text-white'
                         : 'border-white/10 text-[#949BA8] hover:text-white'
                     }`}
                   >
@@ -395,7 +395,7 @@ export const LightTheBuilding: React.FC<LightTheBuildingProps> = ({ products }) 
               </div>
               <Link
                 to="/applications"
-                className="font-mono text-xs text-[#1E6FD9] hover:underline flex items-center gap-1"
+                className="font-mono text-xs text-[#111111] hover:underline flex items-center gap-1"
               >
                 <span>All 7 Application Guides</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
@@ -408,10 +408,10 @@ export const LightTheBuilding: React.FC<LightTheBuildingProps> = ({ products }) 
             <div className="space-y-4">
               <div className="flex items-center justify-between border-b border-[var(--border-hairline)] pb-3">
                 <div>
-                  <span className="font-mono text-[11px] text-[#1E6FD9] block">
+                  <span className="font-mono text-[11px] text-[#111111] block">
                     {activeZone.zoneCode}
                   </span>
-                  <h3 className="font-display font-bold text-xl text-[var(--text-primary)] mt-0.5">
+                  <h3 className="font-display font-medium text-xl text-[var(--text-primary)] mt-0.5">
                     {activeZone.name}
                   </h3>
                 </div>
@@ -438,11 +438,11 @@ export const LightTheBuilding: React.FC<LightTheBuildingProps> = ({ products }) 
                   <p className="text-[var(--text-secondary)]">{activeZone.challenge}</p>
                 </div>
                 <div className="p-3 bg-[var(--bg-primary)] border border-[var(--border-hairline)]">
-                  <span className="font-mono text-[10px] text-[#1E6FD9] block mb-0.5">
+                  <span className="font-mono text-[10px] text-[#111111] block mb-0.5">
                     TYRIA ENGINEERING SOLUTION
                   </span>
                   <p className="text-[var(--text-primary)]">{activeZone.solution}</p>
-                  <div className="font-mono text-[11px] text-[var(--glow)] mt-1.5">
+                  <div className="font-mono text-[11px] text-[var(--text-primary)] mt-1.5">
                     {activeZone.specs}
                   </div>
                 </div>
@@ -461,7 +461,7 @@ export const LightTheBuilding: React.FC<LightTheBuildingProps> = ({ products }) 
                     <div className="min-w-0">
                       <Link
                         to={`/product/${prod.id}`}
-                        className="font-display font-semibold text-xs text-[var(--text-primary)] hover:text-[var(--glow)] block truncate"
+                        className="font-display font-medium text-xs text-[var(--text-primary)] hover:text-[var(--text-primary)] block truncate"
                       >
                         {prod.model}
                       </Link>
@@ -479,7 +479,7 @@ export const LightTheBuilding: React.FC<LightTheBuildingProps> = ({ products }) 
                       <button
                         type="button"
                         onClick={() => addItem(prod)}
-                        className="px-2.5 py-1 bg-[#1E6FD9] hover:bg-[#185EC0] text-white font-mono text-[10px] flex items-center gap-1"
+                        className="px-2.5 py-1 bg-[#111111] hover:bg-[#185EC0] text-white font-mono text-[10px] flex items-center gap-1"
                       >
                         <Plus className="w-3 h-3" /> RFQ
                       </button>
