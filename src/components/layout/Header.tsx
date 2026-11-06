@@ -169,6 +169,7 @@ export const Header: React.FC = () => {
       {/* Products mega menu */}
       <AnimatePresence>
         {megaOpen && (
+          <motion.div exit={{ opacity: 0 }} transition={{ duration: 0.3 }} className="pointer-events-none absolute inset-x-0 top-[76px] hidden justify-center px-5 md:flex">
           <motion.div
             initial={{ opacity: 0, y: -8, scale: 0.985 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -176,7 +177,7 @@ export const Header: React.FC = () => {
             transition={{ duration: 0.45, ease: SILK }}
             onMouseEnter={openMega}
             onMouseLeave={closeMega}
-            className="absolute left-1/2 top-[76px] hidden w-[min(980px,calc(100vw-40px))] -translate-x-1/2 md:block"
+            className="pointer-events-auto w-full max-w-[980px] origin-top"
           >
             <div className="grid grid-cols-4 gap-8 rounded-card bg-paper/95 p-8 shadow-[0_40px_80px_-30px_rgba(17,17,17,0.28)] backdrop-blur-xl">
               {PRODUCT_MENU.map((col) => (
@@ -202,6 +203,7 @@ export const Header: React.FC = () => {
                 </div>
               ))}
             </div>
+          </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

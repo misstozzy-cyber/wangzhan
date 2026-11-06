@@ -102,7 +102,7 @@ function ProductCard({ p, onAdd }: { p: Product; onAdd: () => void }) {
 
         <span
           className={`absolute left-4 top-4 rounded-full px-3 py-1 font-mono text-[10px] uppercase tracking-[0.08em] backdrop-blur-md ${
-            showPhoto ? 'bg-canvas/15 text-canvas/85' : 'bg-canvas/70 text-graphite'
+            showPhoto ? 'bg-ink/45 text-canvas/90' : 'bg-canvas/70 text-graphite'
           }`}
         >
           {p.ip}
