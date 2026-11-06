@@ -1,0 +1,6 @@
+{
+  "summary": "为首页所有次级文本区块（01 Material、02 Profiles、03 Pixel、04 Range、05 Factory、06 Certified 及底部 Closing 模块）实现统一的 Framer Motion 滚动渐显上浮（Scroll Reveal）动画方案，与 Lenis 平滑滚动无缝配合。",
+  "updatedAt": "2026-11-06T04:04:13.168953806Z",
+  "requestFeedback": true,
+  "userFacing": true
+}
