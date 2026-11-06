@@ -8,23 +8,19 @@ import { InquiryDrawer } from './components/common/InquiryDrawer';
 import { HomePage } from './pages/HomePage';
 import { ProductsPage } from './pages/ProductsPage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
-import { DesignerHubPage } from './pages/DesignerHubPage';
-import { FactoryPage } from './pages/FactoryPage';
+import { DownloadsPage } from './pages/DownloadsPage';
 import { AboutPage } from './pages/AboutPage';
 import { ContactPage } from './pages/ContactPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
 import productsData from './data/products.json';
 import catalogsData from './data/catalogs.json';
-import iesLibraryData from './data/ies_library.json';
 import factoryCertsData from './data/factory_certs.json';
-import { Product, CatalogItem, PhotometricEntry, FactoryAsset } from './types/product';
+import { Product, CatalogItem, FactoryAsset } from './types/product';
 
 const products = productsData as Product[];
 const catalogs = catalogsData as CatalogItem[];
-const iesLibrary = iesLibraryData as PhotometricEntry[];
 const factoryAssets = (factoryCertsData.factory || []) as FactoryAsset[];
-const certificateAssets = (factoryCertsData.certificates || []) as FactoryAsset[];
 
 let lenis: Lenis | null = null;
 
@@ -95,25 +91,8 @@ export const App: React.FC = () => {
                   path="/product/:id"
                   element={<ProductDetailPage products={products} />}
                 />
-                <Route
-                  path="/downloads"
-                  element={
-                    <DesignerHubPage
-                      products={products}
-                      catalogs={catalogs}
-                      iesLibrary={iesLibrary}
-                    />
-                  }
-                />
-                <Route
-                  path="/factory"
-                  element={
-                    <FactoryPage
-                      factoryAssets={factoryAssets}
-                      certificateAssets={certificateAssets}
-                    />
-                  }
-                />
+                <Route path="/downloads" element={<DownloadsPage products={products} catalogs={catalogs} />} />
+                <Route path="/factory" element={<Navigate to="/about" replace />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="*" element={<NotFoundPage />} />

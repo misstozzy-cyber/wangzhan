@@ -1,44 +1,24 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Layers, Sliders } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { SEOHead } from '../components/common/SEOHead';
 
-export const NotFoundPage: React.FC = () => {
-  return (
-    <div className="min-h-[70vh] flex items-center justify-center px-4 bg-[var(--bg-primary)]">
-      <SEOHead
-        title="404 — Specification Route Not Found"
-        description="The requested page could not be found. Explore TYRIA Lighting's 1:1 Profile Atlas or Spec Finder."
-      />
-      <div className="max-w-lg w-full p-8 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] text-center space-y-5">
-        <div className="font-mono text-xs text-[#111111]">ERROR 404 · CIRCUIT OPEN</div>
-        <h1 className="font-display font-medium text-3xl text-[var(--text-primary)]">
-          Specification Route Not Found
-        </h1>
-        <p className="text-xs sm:text-sm text-[var(--text-secondary)]">
-          The URL you requested may have moved from our legacy site. Use the links below to jump directly to our 1:1 Profile Atlas or Parametric Spec Finder.
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-3 pt-2 font-mono text-xs">
-          <Link
-            to="/"
-            className="px-4 py-2.5 bg-[#111111] text-white font-semibold flex items-center gap-1.5"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" /> Back to Home
-          </Link>
-          <Link
-            to="/products/neon-flex/atlas"
-            className="px-4 py-2.5 border border-[var(--border-hairline)] hover:border-[var(--text-primary)] flex items-center gap-1.5"
-          >
-            <Layers className="w-3.5 h-3.5 text-[var(--text-primary)]" /> 1:1 Profile Atlas
-          </Link>
-          <Link
-            to="/spec-finder"
-            className="px-4 py-2.5 border border-[var(--border-hairline)] hover:border-white/30 flex items-center gap-1.5"
-          >
-            <Sliders className="w-3.5 h-3.5" /> Spec Finder
-          </Link>
-        </div>
-      </div>
+export const NotFoundPage: React.FC = () => (
+  <div className="flex min-h-[80vh] flex-col items-center justify-center px-5 pt-24 text-center">
+    <SEOHead title="Page not found" description="This page has moved. Browse Tyria Lighting products and downloads." />
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+      className="font-display text-[clamp(120px,24vw,360px)] font-light leading-none tracking-[-0.07em] text-ink"
+    >
+      404
+    </motion.div>
+    <div className="mt-2 h-[3px] w-40 rounded-full bg-glow shadow-[0_0_12px_#FFC97A,0_0_32px_#FFC97A]" />
+    <p className="mt-8 max-w-[36ch] text-[16px] text-graphite">This page has moved or never existed.</p>
+    <div className="mt-8 flex flex-wrap justify-center gap-2">
+      <Link to="/" className="pill-ink h-12 px-7">Home</Link>
+      <Link to="/products" className="pill-soft h-12 px-6">Products</Link>
     </div>
-  );
-};
+  </div>
+);

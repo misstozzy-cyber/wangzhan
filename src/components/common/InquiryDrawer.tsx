@@ -1,505 +1,184 @@
 import React, { useState } from 'react';
-import {
-  X,
-  Trash2,
-  Send,
-  MessageCircle,
-  ShoppingBag,
-  CheckCircle2,
-  Plus,
-  Minus,
-  Mail,
-} from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useInquiry } from '../../context/InquiryContext';
 
-export const InquiryDrawer: React.FC = () => {
-  const { items, removeItem, updateItem, clearBasket, isDrawerOpen, setIsDrawerOpen } =
-    useInquiry();
+const SILK = [0.22, 1, 0.36, 1] as const;
 
+const input =
+  'w-full rounded-[18px] bg-stone/55 px-4 py-3 text-[14px] text-ink placeholder:text-mute transition-colors focus:bg-paper focus:outline-none focus:shadow-[0_10px_24px_-16px_rgba(17,17,17,0.5)]';
+
+export const InquiryDrawer: React.FC = () => {
+  const { items, removeItem, updateItem, clearBasket, isDrawerOpen, setIsDrawerOpen } = useInquiry();
   const [step, setStep] = useState<'list' | 'form' | 'success'>('list');
   const [submitting, setSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    company: '',
-    country: '',
-    email: '',
-    whatsapp: '',
-    projectType: 'Architectural Facade / Commercial',
-    needSample: true,
-    message: '',
-  });
+  const [form, setForm] = useState({ name: '', company: '', country: '', email: '', message: '' });
+  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    setForm((f) => ({ ...f, [k]: e.target.value }));
 
-  const totalCount = items.reduce((acc, i) => acc + i.qty, 0);
-
-  const buildSummaryText = () => {
-    const lines = items.map(
-      (item, idx) =>
-        `${idx + 1}. ${item.model} (${item.itemNo}) | CCT: ${item.cct} | Power: ${
-          item.wattage
-        } | Run: ${item.lengthM}m × ${item.qty} reels | Entry: ${item.cableEntry}${
-          item.note ? ` | Note: ${item.note}` : ''
-        }`
-    );
-    return [
-      `Hello TYRIA Lighting Engineering Team,`,
-      `I would like to request a quote / sample kit for the following models:`,
-      ...lines,
-      ``,
-      `Contact: ${formData.name || 'Engineer'} (${formData.company || 'Studio'}, ${
-        formData.country || 'International'
-      })`,
-      `Email: ${formData.email}`,
-      `Project Type: ${formData.projectType}`,
-      `Free Sample Requested: ${formData.needSample ? 'Yes' : 'No'}`,
-      formData.message ? `Notes: ${formData.message}` : '',
+  const summary = () =>
+    [
+      'Hello Tyria Lighting,',
+      'I would like samples / a quote for:',
+      ...items.map(
+        (it, i) =>
+          `${i + 1}. ${it.model} (${it.itemNo}) | ${it.cct} | ${it.wattage} | ${it.lengthM} m × ${it.qty} | entry: ${it.cableEntry}`,
+      ),
+      '',
+      `${form.name}${form.company ? `, ${form.company}` : ''}${form.country ? ` (${form.country})` : ''}`,
+      form.email,
+      form.message,
     ]
       .filter(Boolean)
       .join('\n');
-  };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-
-    const payload = {
-      submittedAt: new Date().toISOString(),
-      contact: formData,
-      items,
-      summary: buildSummaryText(),
-    };
-
     const endpoint = import.meta.env.VITE_INQUIRY_ENDPOINT;
     if (endpoint) {
       try {
         await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+          body: JSON.stringify({ submittedAt: new Date().toISOString(), contact: form, items, summary: summary() }),
         });
       } catch {
-        // Fallback gracefully to local confirmation + WhatsApp/Email actions
+        // the success screen still offers WhatsApp and email
       }
     }
-
     setSubmitting(false);
     setStep('success');
   };
 
-  const handleWhatsAppDirect = () => {
-    const text = encodeURIComponent(buildSummaryText());
-    window.open(`https://wa.me/8618938693458?text=${text}`, '_blank', 'noopener,noreferrer');
-  };
-
-  const handleEmailDirect = () => {
-    const subject = encodeURIComponent(
-      `RFQ & Sample Inquiry — ${formData.company || 'Lighting Project'} (${items.length} Models)`
-    );
-    const body = encodeURIComponent(buildSummaryText());
-    window.location.href = `mailto:info@tyrialight.com?subject=${subject}&body=${body}`;
+  const close = () => {
+    setIsDrawerOpen(false);
+    if (step === 'success') {
+      clearBasket();
+      setStep('list');
+    }
   };
 
   return (
-    <>
-      {/* Slide-Over Drawer */}
+    <AnimatePresence>
       {isDrawerOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-[#111111]/30 backdrop-blur-sm">
-          <div className="w-full max-w-xl bg-[var(--bg-elevated)] border-l border-[var(--border-hairline)] h-full flex flex-col justify-between overflow-hidden">
-            {/* Drawer Header */}
-            <div className="px-6 py-5 border-b border-[var(--border-hairline)] flex items-center justify-between">
+        <motion.div
+          className="fixed inset-0 z-[60]"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <div className="absolute inset-0 bg-ink/25 backdrop-blur-sm" onClick={close} />
+          <motion.aside
+            data-lenis-prevent
+            initial={{ x: '105%', scale: 0.96 }}
+            animate={{ x: 0, scale: 1 }}
+            exit={{ x: '105%', scale: 0.96 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 32 }}
+            className="absolute bottom-3 right-3 top-3 flex w-[calc(100%-24px)] max-w-[520px] flex-col overflow-hidden rounded-[32px] bg-canvas shadow-[0_40px_100px_-40px_rgba(17,17,17,0.6)]"
+          >
+            <div className="flex items-center justify-between px-7 pb-4 pt-7">
               <div>
-                <h2 className="font-display font-medium text-lg text-[var(--text-primary)]">
-                  Engineering RFQ & Sample Basket
-                </h2>
-                <p className="font-mono text-xs text-[var(--text-muted)]">
-                  Reply within 12 hours · Direct factory specification review
-                </p>
+                <div className="micro">Sample request</div>
+                <div className="mt-1 font-display text-[28px] font-light tracking-[-0.04em] text-ink">
+                  {step === 'success' ? 'Sent.' : step === 'form' ? 'Your details' : `${items.length} model${items.length === 1 ? '' : 's'}`}
+                </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setIsDrawerOpen(false)}
-                className="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-                aria-label="Close Inquiry Drawer"
-              >
-                <X className="w-5 h-5" />
+              <button type="button" onClick={close} className="grid h-10 w-10 place-items-center rounded-full bg-stone/70 text-ink transition-transform duration-500 ease-silk hover:rotate-90" aria-label="Close">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
               </button>
             </div>
 
-            {/* Drawer Body */}
-            <div className="flex-1 overflow-y-auto p-6">
-              {step === 'list' && (
-                <>
-                  {items.length === 0 ? (
-                    <div className="h-full flex flex-col items-center justify-center text-center py-12 space-y-3">
-                      <ShoppingBag className="w-10 h-10 text-[var(--text-muted)] stroke-[1.25]" />
-                      <div className="font-display font-medium text-base text-[var(--text-primary)]">
-                        Your RFQ & Sample Basket is Empty
-                      </div>
-                      <p className="text-xs text-[var(--text-secondary)] max-w-xs">
-                        Add Silicone Neon Flex profiles, COB strips, or Wall Grazers from any product card or the Profile Atlas to build a structured specification inquiry.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {items.map((item) => (
-                        <div
-                          key={item.productId}
-                          className="p-4 bg-[var(--bg-primary)] border border-[var(--border-hairline)] space-y-3"
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <div>
-                              <div className="font-display font-medium text-sm text-[var(--text-primary)]">
-                                {item.model}
-                              </div>
-                              <div className="font-mono text-xs text-[#111111]">
-                                {item.itemNo} · {item.family}
-                              </div>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => removeItem(item.productId)}
-                              className="text-[var(--text-muted)] hover:text-red-700 p-1"
-                              title="Remove item"
+            <div className="flex-1 overflow-y-auto px-4 pb-4">
+              <AnimatePresence mode="wait" initial={false}>
+                {step === 'list' && (
+                  <motion.div key="list" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.4, ease: SILK }}>
+                    {items.length === 0 ? (
+                      <p className="px-3 py-10 text-[15px] text-graphite">Your list is empty. Add models from any product page.</p>
+                    ) : (
+                      <ul className="space-y-2">
+                        <AnimatePresence initial={false}>
+                          {items.map((it) => (
+                            <motion.li
+                              key={it.productId}
+                              layout
+                              exit={{ opacity: 0, x: 60, height: 0, marginTop: 0 }}
+                              transition={{ duration: 0.4, ease: SILK }}
+                              className="rounded-[24px] bg-paper p-4"
                             >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="min-w-0">
+                                  <div className="truncate font-display text-[18px] tracking-[-0.025em] text-ink">{it.model}</div>
+                                  <div className="truncate font-mono text-[10.5px] text-mute">{it.itemNo}</div>
+                                </div>
+                                <button type="button" onClick={() => removeItem(it.productId)} className="rounded-full px-3 py-1 text-[12px] text-mute hover:bg-stone/70 hover:text-ink">
+                                  Remove
+                                </button>
+                              </div>
+                              <div className="mt-3 flex flex-wrap gap-1.5">
+                                {[it.cct, it.wattage, `Entry ${it.cableEntry}`].filter(Boolean).map((t) => (
+                                  <span key={t} className="rounded-full bg-stone/60 px-3 py-1 text-[12px] text-graphite">{t}</span>
+                                ))}
+                              </div>
+                              <div className="mt-3 flex items-center gap-3">
+                                <span className="micro">Length</span>
+                                <div className="flex items-center rounded-full bg-stone/60 p-1">
+                                  <button type="button" onClick={() => updateItem(it.productId, { lengthM: Math.max(1, it.lengthM - 5) })} className="grid h-7 w-7 place-items-center rounded-full hover:bg-paper">−</button>
+                                  <span className="w-14 text-center text-[13px] tabular-nums">{it.lengthM} m</span>
+                                  <button type="button" onClick={() => updateItem(it.productId, { lengthM: it.lengthM + 5 })} className="grid h-7 w-7 place-items-center rounded-full hover:bg-paper">+</button>
+                                </div>
+                              </div>
+                            </motion.li>
+                          ))}
+                        </AnimatePresence>
+                      </ul>
+                    )}
+                  </motion.div>
+                )}
 
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
-                            <div>
-                              <label className="block text-[10px] text-[var(--text-muted)] mb-1">
-                                CCT / COLOR
-                              </label>
-                              <input
-                                type="text"
-                                value={item.cct}
-                                onChange={(e) =>
-                                  updateItem(item.productId, { cct: e.target.value })
-                                }
-                                className="w-full px-2 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] text-[var(--text-primary)]"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-[10px] text-[var(--text-muted)] mb-1">
-                                WATTAGE
-                              </label>
-                              <input
-                                type="text"
-                                value={item.wattage}
-                                onChange={(e) =>
-                                  updateItem(item.productId, { wattage: e.target.value })
-                                }
-                                className="w-full px-2 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] text-[var(--text-primary)]"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-[10px] text-[var(--text-muted)] mb-1">
-                                TOTAL METERS
-                              </label>
-                              <input
-                                type="number"
-                                min={1}
-                                value={item.lengthM}
-                                onChange={(e) =>
-                                  updateItem(item.productId, {
-                                    lengthM: Math.max(1, Number(e.target.value)),
-                                  })
-                                }
-                                className="w-full px-2 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] text-[var(--text-primary)]"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-[10px] text-[var(--text-muted)] mb-1">
-                                CABLE ENTRY
-                              </label>
-                              <select
-                                value={item.cableEntry}
-                                onChange={(e) =>
-                                  updateItem(item.productId, {
-                                    cableEntry: e.target.value as
-                                      | 'Front'
-                                      | 'Side'
-                                      | 'Bottom'
-                                      | 'Standard',
-                                  })
-                                }
-                                className="w-full px-2 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] text-[var(--text-primary)]"
-                              >
-                                <option value="Front">Front Entry</option>
-                                <option value="Side">Side Entry</option>
-                                <option value="Bottom">Bottom Entry</option>
-                                <option value="Standard">Standard Lead</option>
-                              </select>
-                            </div>
-                          </div>
+                {step === 'form' && (
+                  <motion.form id="rfq-form" key="form" onSubmit={submit} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.4, ease: SILK }} className="space-y-2.5 px-3">
+                    <input className={input} placeholder="Name *" required value={form.name} onChange={set('name')} />
+                    <input className={input} placeholder="Company" value={form.company} onChange={set('company')} />
+                    <input className={input} placeholder="Email *" type="email" required value={form.email} onChange={set('email')} />
+                    <input className={input} placeholder="Country" value={form.country} onChange={set('country')} />
+                    <textarea className={`${input} resize-none`} rows={4} placeholder="Project notes" value={form.message} onChange={set('message')} />
+                  </motion.form>
+                )}
 
-                          <div className="flex items-center justify-between pt-1">
-                            <input
-                              type="text"
-                              placeholder="Custom cut length, dimmer protocol, or profile note..."
-                              value={item.note}
-                              onChange={(e) =>
-                                updateItem(item.productId, { note: e.target.value })
-                              }
-                              className="flex-1 mr-3 px-2.5 py-1 text-xs bg-[var(--bg-elevated)] border border-[var(--border-hairline)] text-[var(--text-primary)]"
-                            />
-                            <div className="flex items-center border border-[var(--border-hairline)] bg-[var(--bg-elevated)] font-mono text-xs">
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  updateItem(item.productId, {
-                                    qty: Math.max(1, item.qty - 1),
-                                  })
-                                }
-                                className="px-2 py-1 hover:bg-[var(--bg-surface)]"
-                              >
-                                <Minus className="w-3 h-3" />
-                              </button>
-                              <span className="px-2.5 tabular-nums">{item.qty}</span>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  updateItem(item.productId, { qty: item.qty + 1 })
-                                }
-                                className="px-2 py-1 hover:bg-[var(--bg-surface)]"
-                              >
-                                <Plus className="w-3 h-3" />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </>
-              )}
-
-              {step === 'form' && (
-                <form id="rfq-submit-form" onSubmit={handleSubmit} className="space-y-4">
-                  <div className="p-3 bg-[var(--bg-primary)] border border-[var(--border-hairline)] font-mono text-xs text-[var(--text-secondary)]">
-                    Selected {items.length} model(s) · {totalCount} batch unit(s). Complete your project details below to receive quotation, IES pack, and sample dispatch schedule.
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                    <div>
-                      <label className="block font-mono text-[11px] text-[var(--text-secondary)] mb-1">
-                        YOUR NAME *
-                      </label>
-                      <input
-                        required
-                        type="text"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        placeholder="e.g. Marcus Vance"
-                        className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-hairline)] text-[var(--text-primary)]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block font-mono text-[11px] text-[var(--text-secondary)] mb-1">
-                        COMPANY / STUDIO *
-                      </label>
-                      <input
-                        required
-                        type="text"
-                        value={formData.company}
-                        onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                        placeholder="e.g. Atelier Luminance GmbH"
-                        className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-hairline)] text-[var(--text-primary)]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block font-mono text-[11px] text-[var(--text-secondary)] mb-1">
-                        WORK EMAIL *
-                      </label>
-                      <input
-                        required
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        placeholder="name@studio.com"
-                        className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-hairline)] text-[var(--text-primary)]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block font-mono text-[11px] text-[var(--text-secondary)] mb-1">
-                        COUNTRY / REGION *
-                      </label>
-                      <input
-                        required
-                        type="text"
-                        value={formData.country}
-                        onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                        placeholder="e.g. Germany / UAE / UK / USA"
-                        className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-hairline)] text-[var(--text-primary)]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block font-mono text-[11px] text-[var(--text-secondary)] mb-1">
-                        WHATSAPP / PHONE
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.whatsapp}
-                        onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                        placeholder="+49 / +971 / +44 ..."
-                        className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-hairline)] text-[var(--text-primary)]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block font-mono text-[11px] text-[var(--text-secondary)] mb-1">
-                        APPLICATION TYPE
-                      </label>
-                      <select
-                        value={formData.projectType}
-                        onChange={(e) =>
-                          setFormData({ ...formData, projectType: e.target.value })
-                        }
-                        className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-hairline)] text-[var(--text-primary)]"
-                      >
-                        <option>Architectural Facade / Exterior</option>
-                        <option>Hospitality & Luxury Hotel</option>
-                        <option>Commercial Office (UGR&lt;19)</option>
-                        <option>Retail & Brand Signage</option>
-                        <option>Landscape / Pool IP68</option>
-                        <option>OEM / Wholesale Distribution</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <label className="flex items-center gap-2 text-xs text-[var(--text-primary)] cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={formData.needSample}
-                      onChange={(e) =>
-                        setFormData({ ...formData, needSample: e.target.checked })
-                      }
-                      className="accent-[#111111]"
-                    />
-                    <span>Include Free Engineering Sample Box (0.5m cut samples + end-cap kit)</span>
-                  </label>
-
-                  <div>
-                    <label className="block font-mono text-[11px] text-[var(--text-secondary)] mb-1">
-                      PROJECT NOTES & CUSTOMIZATION (IP68 LEAD LENGTH, ALUMINIUM PROFILES, DALI/DMX)
-                    </label>
-                    <textarea
-                      rows={3}
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      placeholder="Specify required custom reel lengths, dimming protocols, or delivery timeline..."
-                      className="w-full px-3 py-2 text-xs bg-[var(--bg-primary)] border border-[var(--border-hairline)] text-[var(--text-primary)]"
-                    />
-                  </div>
-                </form>
-              )}
-
-              {step === 'success' && (
-                <div className="py-10 space-y-5 text-center">
-                  <CheckCircle2 className="w-12 h-12 text-emerald-700 mx-auto" />
-                  <div className="space-y-1">
-                    <h3 className="font-display font-medium text-xl text-[var(--text-primary)]">
-                      Specification Inquiry Logged
-                    </h3>
-                    <p className="text-xs text-[var(--text-secondary)] max-w-md mx-auto">
-                      Our Shenzhen optical engineering team will review your {items.length} selected model(s) and reply within 12 hours with factory pricing, custom cutting drawings, and IES verification.
+                {step === 'success' && (
+                  <motion.div key="ok" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, ease: SILK }} className="px-3 py-6">
+                    <p className="text-[15px] leading-relaxed text-graphite">
+                      Thank you. We will reply to {form.email}. For a faster answer, send the same list directly:
                     </p>
-                  </div>
-
-                  <div className="p-4 bg-[var(--bg-primary)] border border-[var(--border-hairline)] text-left font-mono text-[11px] whitespace-pre-wrap text-[var(--text-secondary)] max-h-48 overflow-y-auto">
-                    {buildSummaryText()}
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
-                    <button
-                      type="button"
-                      onClick={handleWhatsAppDirect}
-                      className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#16A34A] hover:bg-[#15803D] text-white font-mono text-xs font-medium"
-                    >
-                      <MessageCircle className="w-4 h-4" />
-                      Send Immediately via WhatsApp
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleEmailDirect}
-                      className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#111111] hover:bg-[#185EC0] text-white font-mono text-xs font-medium"
-                    >
-                      <Mail className="w-4 h-4" />
-                      Send via Email Client
-                    </button>
-                  </div>
-                </div>
-              )}
+                    <div className="mt-6 flex flex-wrap gap-2">
+                      <a className="pill-ink h-11" href={`https://wa.me/8618938693458?text=${encodeURIComponent(summary())}`} target="_blank" rel="noreferrer">WhatsApp</a>
+                      <a className="pill-soft h-11" href={`mailto:info@tyrialight.com?subject=${encodeURIComponent('Sample request')}&body=${encodeURIComponent(summary())}`}>Email</a>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
-            {/* Drawer Footer */}
-            <div className="px-6 py-4 border-t border-[var(--border-hairline)] bg-[var(--bg-primary)] flex items-center justify-between gap-3">
-              {step === 'list' && items.length > 0 && (
-                <>
-                  <button
-                    type="button"
-                    onClick={clearBasket}
-                    className="text-xs font-mono text-[var(--text-muted)] hover:text-red-700"
-                  >
-                    Clear All
+            {step !== 'success' && items.length > 0 && (
+              <div className="flex items-center justify-between gap-3 px-7 pb-7 pt-3">
+                {step === 'form' ? (
+                  <button type="button" onClick={() => setStep('list')} className="text-[14px] text-graphite hover:text-ink">← Back</button>
+                ) : (
+                  <button type="button" onClick={clearBasket} className="text-[14px] text-graphite hover:text-ink">Clear</button>
+                )}
+                {step === 'list' ? (
+                  <button type="button" onClick={() => setStep('form')} className="pill-ink h-12 px-7">Continue</button>
+                ) : (
+                  <button type="submit" form="rfq-form" disabled={submitting} className="pill-ink h-12 px-7">
+                    {submitting ? 'Sending…' : 'Send request'}
                   </button>
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={handleWhatsAppDirect}
-                      className="px-3 py-2 border border-[var(--border-hairline)] hover:border-white/30 text-xs font-mono flex items-center gap-1.5"
-                    >
-                      <MessageCircle className="w-3.5 h-3.5 text-emerald-700" />
-                      WhatsApp List
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setStep('form')}
-                      className="px-5 py-2 bg-[#111111] hover:bg-[#185EC0] text-white text-xs font-mono font-semibold flex items-center gap-1.5"
-                    >
-                      <Send className="w-3.5 h-3.5" />
-                      Proceed to Send Inquiry →
-                    </button>
-                  </div>
-                </>
-              )}
-
-              {step === 'form' && (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => setStep('list')}
-                    className="text-xs font-mono text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-                  >
-                    ← Back to Models
-                  </button>
-                  <button
-                    type="submit"
-                    form="rfq-submit-form"
-                    disabled={submitting}
-                    className="px-5 py-2 bg-[#111111] hover:bg-[#185EC0] text-white text-xs font-mono font-semibold flex items-center gap-1.5"
-                  >
-                    <Send className="w-3.5 h-3.5" />
-                    {submitting ? 'Submitting...' : 'Submit Structured RFQ'}
-                  </button>
-                </>
-              )}
-
-              {step === 'success' && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    clearBasket();
-                    setStep('list');
-                    setIsDrawerOpen(false);
-                  }}
-                  className="w-full py-2 border border-[var(--border-hairline)] text-xs font-mono text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-                >
-                  Done & Close
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
+                )}
+              </div>
+            )}
+          </motion.aside>
+        </motion.div>
       )}
-    </>
+    </AnimatePresence>
   );
 };
