@@ -259,11 +259,19 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }
 
         {/* 1. Sticky info + stacking gallery */}
         <div ref={galleryRef} className="mt-6 grid gap-10 lg:grid-cols-12">
-          <div className="lg:col-span-5">
+          <div className="min-w-0 lg:col-span-5">
             <div className="lg:sticky lg:top-28">
               <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: SILK }}>
                 <div className="micro">{product.family}</div>
-                <h1 className="mt-4 font-display text-[clamp(52px,6.4vw,112px)] font-light leading-[0.9] tracking-[-0.06em] text-ink">
+                <h1
+                  className={`mt-4 break-words font-display font-light leading-[0.92] tracking-[-0.055em] text-ink ${
+                    product.model.length > 18
+                      ? 'text-[clamp(30px,2.9vw,50px)]'
+                      : product.model.length > 10
+                        ? 'text-[clamp(40px,4.4vw,76px)]'
+                        : 'text-[clamp(52px,6.4vw,112px)]'
+                  }`}
+                >
                   {product.model}
                 </h1>
                 <div className="mt-3 font-mono text-[12px] tracking-[0.04em] text-mute">{product.itemNo}</div>

@@ -64,12 +64,22 @@ export const Header: React.FC = () => {
   const [megaOpen, setMegaOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const { pathname } = useLocation();
   const closeTimer = useRef<number | undefined>(undefined);
   const totalItems = items.reduce((acc, i) => acc + i.qty, 0);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 24);
+      // Tuck the bar away while reading downwards, bring it back on any upward scroll.
+      if (Math.abs(y - last) > 6) {
+        setHidden(y > last && y > 160);
+        last = y;
+      }
+    };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -93,8 +103,8 @@ export const Header: React.FC = () => {
   return (
     <motion.header
       initial={{ opacity: 0, y: -12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1, ease: SILK, delay: 0.2 }}
+      animate={{ opacity: 1, y: hidden && !megaOpen && !mobileOpen ? '-110%' : '0%' }}
+      transition={{ duration: 0.6, ease: SILK }}
       className={`fixed inset-x-0 top-0 z-50 transition-colors duration-700 ease-silk ${
         scrolled || megaOpen || mobileOpen ? 'bg-canvas/80 backdrop-blur-xl' : ''
       }`}

@@ -46,8 +46,16 @@ const SmoothScroll: React.FC = () => {
 const ScrollToTop: React.FC = () => {
   const { pathname } = useLocation();
   useEffect(() => {
-    if (lenis) lenis.scrollTo(0, { immediate: true });
-    else window.scrollTo(0, 0);
+    if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual';
+    const top = () => {
+      window.scrollTo(0, 0);
+      lenis?.resize();
+      lenis?.scrollTo(0, { immediate: true, force: true });
+    };
+    top();
+    // Again after the new page has laid out, so a taller previous page cannot leave us mid-way.
+    const id = requestAnimationFrame(() => requestAnimationFrame(top));
+    return () => cancelAnimationFrame(id);
   }, [pathname]);
   return null;
 };
