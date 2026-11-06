@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import Lenis from 'lenis';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { GlowProvider } from './context/GlowContext';
 import { InquiryProvider } from './context/InquiryContext';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
@@ -59,7 +58,6 @@ const ScrollToTop: React.FC = () => {
 
 export const App: React.FC = () => {
   return (
-    <GlowProvider>
       <InquiryProvider>
         <BrowserRouter>
           <SmoothScroll />
@@ -126,7 +124,6 @@ export const App: React.FC = () => {
           </div>
         </BrowserRouter>
       </InquiryProvider>
-    </GlowProvider>
   );
 };
 

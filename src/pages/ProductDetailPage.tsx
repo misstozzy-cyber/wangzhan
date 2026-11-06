@@ -1,718 +1,466 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
-  FileText,
-  Download,
-  Plus,
-  CheckCircle2,
-  AlertTriangle,
-  Layers,
-  Sparkles,
-  ArrowLeft,
-  ShieldCheck,
-} from 'lucide-react';
-import { Product } from '../types/product';
+  AnimatePresence,
+  animate,
+  motion,
+  useInView,
+  useScroll,
+  useTransform,
+  type MotionValue,
+} from 'framer-motion';
+import { Product, PhotometricEntry } from '../types/product';
 import { SEOHead } from '../components/common/SEOHead';
 import { ProfileCrossSectionSVG } from '../components/products/ProfileCrossSectionSVG';
-import { useGlow } from '../context/GlowContext';
 import { useInquiry } from '../context/InquiryContext';
+import lightHeroes from '../data/light_heroes.json';
+
+const LIGHT_HEROES = new Set<string>(lightHeroes as string[]);
+const SILK = [0.22, 1, 0.36, 1] as const;
+type Entry = 'Front' | 'Side' | 'Bottom' | 'Standard';
+
+const Arrow = ({ down = false }: { down?: boolean }) => (
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className={down ? 'rotate-[135deg]' : ''}>
+    <path d="M3 9L9 3M9 3H4M9 3v5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+/** Number that counts up the first time it scrolls into view. */
+function CountUp({ value, suffix = '' }: { value: number; suffix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-15% 0px' });
+  const [shown, setShown] = useState(0);
+  useEffect(() => {
+    if (!inView) return;
+    const c = animate(0, value, { duration: 1.6, ease: SILK, onUpdate: (v) => setShown(Math.round(v)) });
+    return () => c.stop();
+  }, [inView, value]);
+  return (
+    <span ref={ref} className="tabular-nums">
+      {shown.toLocaleString('en-US')}
+      {suffix}
+    </span>
+  );
+}
+
+/** One plate in the sticky stacking gallery. Earlier plates sink back as later ones slide over them. */
+function Plate({
+  i,
+  total,
+  progress,
+  children,
+  tone,
+  caption,
+}: {
+  i: number;
+  total: number;
+  progress: MotionValue<number>;
+  children: React.ReactNode;
+  tone: 'dark' | 'light' | 'stone';
+  caption: string;
+}) {
+  const start = i / total;
+  const scale = useTransform(progress, [start, 1], [1, 1 - (total - i - 1) * 0.04]);
+  const dim = useTransform(progress, [start, Math.min(1, start + 1 / total)], [0, i === total - 1 ? 0 : 0.35]);
+  const bg = tone === 'dark' ? 'bg-ink' : tone === 'light' ? 'bg-white' : 'bg-stone/70';
+  return (
+    <div className="sticky" style={{ top: `calc(96px + ${i * 14}px)` }}>
+      <motion.figure
+        style={{ scale }}
+        className={`relative aspect-[5/4] origin-top overflow-hidden rounded-card ${bg} shadow-[0_-20px_50px_-30px_rgba(17,17,17,0.35)]`}
+      >
+        {children}
+        <motion.div style={{ opacity: dim }} className="pointer-events-none absolute inset-0 bg-ink" />
+        <figcaption
+          className={`absolute left-5 top-5 rounded-full px-3 py-1 font-mono text-[10px] uppercase tracking-[0.08em] backdrop-blur-md ${
+            tone === 'dark' ? 'bg-canvas/15 text-canvas/85' : 'bg-ink/5 text-graphite'
+          }`}
+        >
+          {caption}
+        </figcaption>
+      </motion.figure>
+      <div className="h-6" />
+    </div>
+  );
+}
+
+function Option<T extends string>({
+  label,
+  values,
+  value,
+  onChange,
+  id,
+}: {
+  label: string;
+  values: T[];
+  value: T;
+  onChange: (v: T) => void;
+  id: string;
+}) {
+  if (values.length === 0) return null;
+  return (
+    <div>
+      <div className="micro mb-3">{label}</div>
+      <div className="flex flex-wrap gap-1.5">
+        {values.map((v) => (
+          <button
+            key={v}
+            type="button"
+            onClick={() => onChange(v)}
+            className={`relative rounded-full px-3.5 py-2 text-[13px] transition-colors ${value === v ? '' : 'bg-stone/60'}`}
+          >
+            {value === v && (
+              <motion.span
+                layoutId={`opt-${id}`}
+                transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                className="absolute inset-0 rounded-full bg-ink"
+              />
+            )}
+            <span
+              className={`relative transition-colors duration-300 ${
+                value === v ? 'text-canvas' : 'text-graphite hover:text-ink'
+              }`}
+            >
+              {v}
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function uniqueByUrl(list: PhotometricEntry[]) {
+  const seen = new Set<string>();
+  return list.filter((e) => (seen.has(e.url) ? false : (seen.add(e.url), true)));
+}
 
 interface ProductDetailPageProps {
   products: Product[];
 }
 
-const EXPLODED_LAYERS = [
-  {
-    id: 0,
-    code: 'LAYER 01 · OPTICAL ENCAPSULATION',
-    title: 'Dow SILASTIC™ ET-7021 Co-Extruded Jacket',
-    desc: 'Platinum-cured optical silicone formulation with dust-free matte surface treatment. Resists UV yellowing, salt mist corrosion, chlorine, and extreme temperatures (-25°C to +60°C).',
-    highlightKey: 'material',
-  },
-  {
-    id: 1,
-    code: 'LAYER 02 · LIGHT ENGINE & FPC',
-    title: '1-Bin High-CRI LED Array on 2oz/3oz Rolled Copper FPC',
-    desc: 'High-density SMD / Flip-Chip COB package sorted to 1 Bin (SDCM ≤ 3, Ra ≥ 90/98) with onboard constant-current regulation for uniform end-to-end luminance.',
-    highlightKey: 'led',
-  },
-  {
-    id: 2,
-    code: 'LAYER 03 · INGRESS SEALING & CABLE ENTRY',
-    title: 'IP67 / IP68 Injection-Molded & Solder-Free End Caps',
-    desc: 'Available with Front (Direct), Side (Left/Right), and Bottom hidden cable entry options to eliminate dark gaps at continuous architectural joints.',
-    highlightKey: 'entry',
-  },
-  {
-    id: 3,
-    code: 'LAYER 04 · ARCHITECTURAL MOUNTING HARDWARE',
-    title: 'Anodized 6063 Aluminium Profile & Serrated Bendable Track',
-    desc: 'Supplied with 1m/2m rigid aluminium channels, 20mm mounting clips, or flexible stainless-steel serrated tracks for curved facade installations.',
-    highlightKey: 'mounting',
-  },
-];
-
 export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ products }) => {
   const { id } = useParams<{ id: string }>();
-  const { setKelvin, color } = useGlow();
   const { addItem } = useInquiry();
+  const product = useMemo(() => products.find((p) => p.id === id) || products[0], [products, id]);
 
-  const product = useMemo(
-    () => products.find((p) => p.id === id) || products[0],
-    [products, id]
-  );
+  const [cct, setCct] = useState(product.cctOptions[0] || '3000K');
+  const [watt, setWatt] = useState(product.wattOptions[0] ? `${product.wattOptions[0]}W/m` : '');
+  const [entry, setEntry] = useState<Entry>('Front');
+  const [lengthM, setLengthM] = useState(50);
+  const [added, setAdded] = useState(false);
+  const [allFiles, setAllFiles] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<'hero' | 'section' | 'specsheet' | 'curve'>('hero');
-  const [selectedCct, setSelectedCct] = useState<string>(product?.cctOptions[0] || '3000K');
-  const [selectedWatt, setSelectedWatt] = useState<string>(
-    product?.wattOptions[0] ? `${product.wattOptions[0]}W/m` : '10W/m'
-  );
-  const [selectedEntry, setSelectedEntry] = useState<'Front' | 'Side' | 'Bottom' | 'Standard'>('Front');
-  const [lengthM, setLengthM] = useState<number>(50);
-  const [qty, setQty] = useState<number>(1);
-  const [activeLayer, setActiveLayer] = useState<number>(0);
+  useEffect(() => {
+    setCct(product.cctOptions[0] || '3000K');
+    setWatt(product.wattOptions[0] ? `${product.wattOptions[0]}W/m` : '');
+    setEntry('Front');
+    setAdded(false);
+  }, [product]);
 
-  if (!product) return null;
+  const galleryRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: galleryRef, offset: ['start start', 'end end'] });
 
-  const relatedModels = products
-    .filter((p) => p.familySlug === product.familySlug && p.id !== product.id)
-    .slice(0, 4);
+  const showPhoto = Boolean(product.images.hero) && !LIGHT_HEROES.has(product.id);
+  const plates: { key: string; tone: 'dark' | 'light' | 'stone'; caption: string; node: React.ReactNode }[] = [
+    showPhoto
+      ? {
+          key: 'hero',
+          tone: 'dark',
+          caption: 'Studio',
+          node: <img src={product.images.hero} alt={product.model} className="h-full w-full object-cover" />,
+        }
+      : {
+          key: 'hero',
+          tone: 'stone',
+          caption: 'Cross-section',
+          node: (
+            <div className="flex h-full items-center justify-center text-ink">
+              <div className="scale-[1.6]">
+                <ProfileCrossSectionSVG w={product.size.w} h={product.size.h} view={product.view} scale={4.2} showDimensions={false} />
+              </div>
+            </div>
+          ),
+        },
+    ...(product.images.section
+      ? [{ key: 'section', tone: 'light' as const, caption: 'Dimensions', node: <img src={product.images.section} alt={`${product.model} dimensions`} loading="lazy" className="h-full w-full object-contain p-6" /> }]
+      : []),
+    ...(product.images.curve
+      ? [{ key: 'curve', tone: 'light' as const, caption: 'Light distribution', node: <img src={product.images.curve} alt={`${product.model} light distribution`} loading="lazy" className="h-full w-full object-contain p-6" /> }]
+      : []),
+    ...product.images.detail.slice(0, 2).map((src, k) => ({
+      key: `d${k}`,
+      tone: 'light' as const,
+      caption: k === 0 ? 'Installation' : 'Details',
+      node: <img src={src} alt={`${product.model} detail ${k + 1}`} loading="lazy" className="h-full w-full object-contain p-6" />,
+    })),
+  ];
 
-  const handleCctSelect = (cct: string) => {
-    setSelectedCct(cct);
-    const numMatch = cct.match(/(\d{4})/);
-    if (numMatch) {
-      setKelvin(Number(numMatch[1]));
-    }
+  const isLinear = product.view !== 'Sheet';
+  const keyNumbers = [
+    product.maxLumen ? { v: product.maxLumen, s: '', l: isLinear ? 'Max lm / m' : 'Max lumen' } : null,
+    product.efficacy ? { v: product.efficacy, s: '', l: 'lm / W' } : null,
+    product.minBendDiameter ? { v: product.minBendDiameter, s: ' mm', l: 'Min. bend Ø' } : null,
+    product.ledsPerM ? { v: product.ledsPerM, s: '', l: isLinear ? 'LEDs / m' : 'LEDs' } : null,
+  ].filter(Boolean) as { v: number; s: string; l: string }[];
+
+  const specRows: [string, string][] = [
+    ['Part number', product.itemNo],
+    ['Size', product.view === '360' ? `Ø ${product.size.w} mm` : `${product.size.w} × ${product.size.h} mm`],
+    ['Light output', product.view],
+    ['Voltage', product.voltage],
+    ['Power', product.wattOptions.length ? `${product.wattOptions.join(' / ')} W/m` : '—'],
+    ['LED', `${product.ledType}${product.ledsPerM ? ` · ${product.ledsPerM}/m` : ''}`],
+    ['Colour rendering', product.cri],
+    ['Colour consistency', product.sdcm],
+    ['Ingress rating', product.ip],
+    ['Cut unit', product.cutUnit],
+    ['Max run', product.maxRun],
+    ['Warranty', product.warranty],
+  ].filter(([, v]) => v && v !== '—') as [string, string][];
+
+  const ies = uniqueByUrl(product.downloads.ies);
+  const ldt = uniqueByUrl(product.downloads.ldt);
+  const reports = uniqueByUrl(product.downloads.report);
+  const related = products.filter((p) => p.seriesSlug === product.seriesSlug && p.id !== product.id).concat(
+    products.filter((p) => p.familySlug === product.familySlug && p.seriesSlug !== product.seriesSlug),
+  ).slice(0, 8);
+
+  const files = [
+    ...(product.downloads.datasheet ? [{ k: 'PDF', t: 'Datasheet', s: product.itemNo, u: product.downloads.datasheet }] : []),
+    ...ies.map((e) => ({ k: 'IES', t: `Photometry ${e.label || e.cct}`, s: `${e.watt} · ${e.filename}`, u: e.url })),
+    ...ldt.map((e) => ({ k: 'LDT', t: `Eulumdat ${e.label || e.cct}`, s: `${e.watt} · ${e.filename}`, u: e.url })),
+    ...reports.map((e) => ({ k: 'PDF', t: `Test report ${e.label || e.cct}`, s: e.filename, u: e.url })),
+  ];
+
+  const add = () => {
+    addItem(product, { cct, wattage: watt || undefined, cableEntry: entry, lengthM, qty: 1 });
+    setAdded(true);
   };
 
   return (
-    <div className="min-h-screen py-10 bg-[var(--bg-primary)]">
+    <div className="min-h-screen pt-24">
       <SEOHead
-        title={`${product.model} (${product.itemNo}) — ${product.series}`}
+        title={`${product.model} (${product.itemNo}) · ${product.series}`}
         description={product.pitch}
         canonicalPath={`/product/${product.id}`}
         product={product}
       />
 
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-8 space-y-16">
+      <div className="mx-auto max-w-[1600px] px-5 sm:px-10">
         {/* Breadcrumb */}
-        <div className="flex items-center justify-between font-mono text-xs text-[var(--text-muted)]">
-          <div className="flex items-center gap-2">
-            <Link to="/products" className="hover:text-[var(--text-primary)] flex items-center gap-1">
-              <ArrowLeft className="w-3.5 h-3.5" /> Products
-            </Link>
-            <span>/</span>
-            <Link to={`/products/${product.familySlug}`} className="hover:text-[var(--text-primary)]">
-              {product.family}
-            </Link>
-            <span>/</span>
-            <Link
-              to={`/products/${product.familySlug}/${product.seriesSlug}`}
-              className="hover:text-[var(--text-primary)]"
-            >
-              {product.series}
-            </Link>
-            <span>/</span>
-            <span className="text-[var(--text-primary)]">{product.model}</span>
-          </div>
-          <span>PART NO: {product.itemNo}</span>
-        </div>
+        <nav className="flex flex-wrap items-center gap-1 text-[13px] text-mute">
+          <Link to="/products" className="rounded-full px-2 py-1 hover:bg-stone/60 hover:text-ink">Products</Link>
+          <span>/</span>
+          <Link to={`/products/${product.familySlug}`} className="rounded-full px-2 py-1 hover:bg-stone/60 hover:text-ink">{product.family}</Link>
+          <span>/</span>
+          <Link to={`/products/${product.familySlug}/${product.seriesSlug}`} className="rounded-full px-2 py-1 hover:bg-stone/60 hover:text-ink">{product.series}</Link>
+        </nav>
 
-        {/* 1. Top Hero Gallery & Specification Configurator (12 cols) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left Visual Gallery (7 cols) */}
-          <div className="lg:col-span-7 space-y-3">
-            {/* Gallery Tabs */}
-            <div className="flex flex-wrap gap-1.5 font-mono text-xs">
-              <button
-                type="button"
-                onClick={() => setActiveTab('hero')}
-                className={`px-3.5 py-2 border transition-colors ${
-                  activeTab === 'hero'
-                    ? 'border-[#111111] bg-[#111111] text-white font-semibold'
-                    : 'border-[var(--border-hairline)] bg-[var(--bg-elevated)] text-[var(--text-secondary)]'
-                }`}
-              >
-                Studio Product View
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('section')}
-                className={`px-3.5 py-2 border transition-colors ${
-                  activeTab === 'section'
-                    ? 'border-[#111111] bg-[#111111] text-white font-semibold'
-                    : 'border-[var(--border-hairline)] bg-[var(--bg-elevated)] text-[var(--text-secondary)]'
-                }`}
-              >
-                1:1 Interactive Cross-Section
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('specsheet')}
-                className={`px-3.5 py-2 border transition-colors ${
-                  activeTab === 'specsheet'
-                    ? 'border-[#111111] bg-[#111111] text-white font-semibold'
-                    : 'border-[var(--border-hairline)] bg-[var(--bg-elevated)] text-[var(--text-secondary)]'
-                }`}
-              >
-                Dimension & Spec Sheet
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('curve')}
-                className={`px-3.5 py-2 border transition-colors ${
-                  activeTab === 'curve'
-                    ? 'border-[#111111] bg-[#111111] text-white font-semibold'
-                    : 'border-[var(--border-hairline)] bg-[var(--bg-elevated)] text-[var(--text-secondary)]'
-                }`}
-              >
-                Photometric Distribution
-              </button>
-            </div>
+        {/* 1. Sticky info + stacking gallery */}
+        <div ref={galleryRef} className="mt-6 grid gap-10 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <div className="lg:sticky lg:top-28">
+              <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: SILK }}>
+                <div className="micro">{product.family}</div>
+                <h1 className="mt-4 font-display text-[clamp(52px,6.4vw,112px)] font-light leading-[0.9] tracking-[-0.06em] text-ink">
+                  {product.model}
+                </h1>
+                <div className="mt-3 font-mono text-[12px] tracking-[0.04em] text-mute">{product.itemNo}</div>
+                <p className="mt-6 max-w-[46ch] text-[15px] leading-relaxed text-graphite">{product.pitch}</p>
+              </motion.div>
 
-            {/* Viewport */}
-            <div className="relative min-h-[460px] bg-[#07080B] border border-[var(--border-hairline)] flex items-center justify-center p-6 overflow-hidden">
-              {activeTab === 'hero' && (
-                <div className="relative w-full h-full flex flex-col items-center justify-center">
-                  <img
-                    src={product.images.hero}
-                    alt={product.model}
-                    width={700}
-                    height={700}
-                    className="max-h-[400px] w-auto object-contain"
-                  />
-                  {/* Corner 1:1 Cross-Section Mini Badge */}
-                  <div className="absolute right-4 bottom-4 p-3 bg-[#0D0F14]/90 border border-white/15">
-                    <ProfileCrossSectionSVG
-                      w={product.size.w}
-                      h={product.size.h}
-                      view={product.view}
-                      scale={3.6}
-                    />
+              <div className="mt-8 space-y-6">
+                <Option id="cct" label="Colour" values={product.cctOptions} value={cct} onChange={setCct} />
+                <Option id="watt" label="Power" values={product.wattOptions.map((w) => `${w}W/m`)} value={watt} onChange={setWatt} />
+                {isLinear && (
+                  <Option<Entry> id="entry" label="Cable entry" values={['Front', 'Side', 'Bottom']} value={entry} onChange={setEntry} />
+                )}
+                <div>
+                  <div className="mb-3 flex justify-between">
+                    <span className="micro">Sample length</span>
+                    <span className="text-[13px] tabular-nums text-ink">{lengthM} m</span>
                   </div>
-                </div>
-              )}
-
-              {activeTab === 'section' && (
-                <div className="text-center space-y-6 py-8">
-                  <ProfileCrossSectionSVG
-                    w={product.size.w}
-                    h={product.size.h}
-                    view={product.view}
-                    scale={7.5}
+                  <input
+                    type="range"
+                    min={1}
+                    max={200}
+                    value={lengthM}
+                    onChange={(e) => setLengthM(Number(e.target.value))}
+                    className="w-full accent-[#111111]"
                   />
-                  <div className="font-mono text-xs text-[#949BA8]">
-                    TRUE SCALE GEOMETRY: {product.size.w}mm (W) × {product.size.h}mm (H) · EMITTING: {product.view} · MIN. BEND Ø{product.minBendDiameter}mm
-                  </div>
                 </div>
-              )}
-
-              {activeTab === 'specsheet' && (
-                <img
-                  src={product.images.section}
-                  alt={`${product.model} specification drawing`}
-                  className="max-h-[520px] w-auto object-contain"
-                />
-              )}
-
-              {activeTab === 'curve' && (
-                <img
-                  src={product.images.curve}
-                  alt={`${product.model} light distribution curve`}
-                  className="max-h-[520px] w-auto object-contain"
-                />
-              )}
-            </div>
-          </div>
-
-          {/* Right Product Configurator & RFQ Actions (5 cols) */}
-          <div className="lg:col-span-5 p-6 sm:p-8 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] space-y-6">
-            <div className="border-b border-[var(--border-hairline)] pb-4 space-y-1.5">
-              <div className="flex items-center justify-between font-mono text-xs text-[#111111]">
-                <span>{product.family.toUpperCase()} · {product.series.toUpperCase()}</span>
-                <span>{product.ip}</span>
               </div>
-              <h1 className="font-display font-medium text-2xl sm:text-3xl text-[var(--text-primary)]">
-                {product.model}
-              </h1>
-              <div className="font-mono text-xs text-[var(--text-muted)]">
-                PART NO: <span className="text-[var(--text-primary)]">{product.itemNo}</span>
-              </div>
-            </div>
 
-            <p className="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
-              {product.pitch}
-            </p>
-
-            {/* Interactive CCT Swatches (Updates Global Glow) */}
-            <div>
-              <div className="flex items-center justify-between font-mono text-xs mb-2">
-                <span className="text-[var(--text-muted)]">SELECT COLOR / CCT (LIVE GLOW)</span>
-                <span style={{ color: color.hex }}>{selectedCct}</span>
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {product.cctOptions.map((cct) => {
-                  const active = selectedCct === cct;
-                  return (
-                    <button
-                      key={cct}
-                      type="button"
-                      onClick={() => handleCctSelect(cct)}
-                      className={`px-3 py-1.5 font-mono text-xs border transition-all ${
-                        active
-                          ? 'border-[var(--text-primary)] bg-[var(--bg-primary)] text-[var(--text-primary)] font-semibold glow-box'
-                          : 'border-[var(--border-hairline)] bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:border-white/30'
-                      }`}
+              <div className="mt-8 flex flex-wrap gap-2">
+                <button type="button" onClick={add} className="pill-ink h-12 px-7">
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.span
+                      key={added ? 'a' : 'b'}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.3 }}
                     >
-                      {cct}
-                    </button>
-                  );
-                })}
+                      {added ? 'Added to your list' : 'Request a sample'}
+                    </motion.span>
+                  </AnimatePresence>
+                </button>
+                {product.downloads.datasheet && (
+                  <a href={product.downloads.datasheet} target="_blank" rel="noreferrer" className="pill-soft h-12 px-6">
+                    Datasheet <Arrow down />
+                  </a>
+                )}
               </div>
             </div>
+          </div>
 
-            {/* Wattage & Cable Entry Options */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block font-mono text-[11px] text-[var(--text-muted)] mb-1.5">
-                  RATED POWER (W/M)
-                </label>
-                <div className="flex flex-wrap gap-1.5">
-                  {product.wattOptions.map((w) => {
-                    const label = `${w}W/m`;
-                    return (
-                      <button
-                        key={w}
-                        type="button"
-                        onClick={() => setSelectedWatt(label)}
-                        className={`px-2.5 py-1.5 font-mono text-xs border ${
-                          selectedWatt === label
-                            ? 'border-[#111111] bg-[#111111]/15 text-[var(--text-primary)] font-semibold'
-                            : 'border-[var(--border-hairline)] bg-[var(--bg-primary)] text-[var(--text-secondary)]'
-                        }`}
-                      >
-                        {label}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-mono text-[11px] text-[var(--text-muted)] mb-1.5">
-                  CABLE ENTRY DIRECTION
-                </label>
-                <select
-                  value={selectedEntry}
-                  onChange={(e) =>
-                    setSelectedEntry(
-                      e.target.value as 'Front' | 'Side' | 'Bottom' | 'Standard'
-                    )
-                  }
-                  className="w-full px-3 py-1.5 bg-[var(--bg-primary)] border border-[var(--border-hairline)] font-mono text-xs text-[var(--text-primary)]"
-                >
-                  <option value="Front">Front Cable Entry (Direct)</option>
-                  <option value="Side">Side Cable Entry (Left/Right)</option>
-                  <option value="Bottom">Bottom Hidden Entry</option>
-                  <option value="Standard">Solder-Free End Cap</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Project Length & Batch Quantity */}
-            <div className="grid grid-cols-2 gap-4 font-mono text-xs">
-              <div>
-                <label className="block text-[11px] text-[var(--text-muted)] mb-1">
-                  ESTIMATED PROJECT METERS
-                </label>
-                <input
-                  type="number"
-                  min={1}
-                  value={lengthM}
-                  onChange={(e) => setLengthM(Math.max(1, Number(e.target.value)))}
-                  className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-hairline)] text-[var(--text-primary)]"
-                />
-              </div>
-              <div>
-                <label className="block text-[11px] text-[var(--text-muted)] mb-1">
-                  REELS / BATCH UNITS
-                </label>
-                <input
-                  type="number"
-                  min={1}
-                  value={qty}
-                  onChange={(e) => setQty(Math.max(1, Number(e.target.value)))}
-                  className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-hairline)] text-[var(--text-primary)]"
-                />
-              </div>
-            </div>
-
-            {/* Primary CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() =>
-                  addItem(product, {
-                    cct: selectedCct,
-                    wattage: selectedWatt,
-                    cableEntry: selectedEntry,
-                    lengthM,
-                    qty,
-                  })
-                }
-                className="flex-1 py-3.5 px-5 bg-[#111111] hover:bg-[#185EC0] text-white font-mono text-xs font-semibold flex items-center justify-center gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add to Inquiry Basket</span>
-              </button>
-
-              <a
-                href={product.downloads.datasheet}
-                target="_blank"
-                rel="noreferrer"
-                className="py-3.5 px-5 bg-[var(--bg-primary)] hover:border-[var(--text-primary)] border border-[var(--border-hairline)] text-[var(--text-primary)] font-mono text-xs font-semibold flex items-center justify-center gap-2"
-              >
-                <FileText className="w-4 h-4 text-[#111111]" />
-                <span>Datasheet PDF</span>
-              </a>
-            </div>
-
-            {/* Key Engineering Features List */}
-            <ul className="space-y-2 pt-3 border-t border-[var(--border-hairline)] text-xs text-[var(--text-secondary)]">
-              {product.features.map((feat, i) => (
-                <li key={i} className="flex items-start gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0 mt-0.5" />
-                  <span>{feat}</span>
-                </li>
-              ))}
-            </ul>
+          <div className="lg:col-span-7">
+            {plates.map((pl, i) => (
+              <Plate key={pl.key} i={i} total={plates.length} progress={scrollYProgress} tone={pl.tone} caption={pl.caption}>
+                {pl.node}
+              </Plate>
+            ))}
           </div>
         </div>
 
-        {/* 2. Interactive Exploded Structural View & Synchronized Spec Table */}
-        <section className="pt-8 border-t border-[var(--border-hairline)] space-y-8">
-          <div>
-            <h2 className="font-display font-medium text-2xl sm:text-3xl text-[var(--text-primary)]">
-              Exploded Structural Architecture & Telemetry
-            </h2>
-            <p className="text-sm text-[var(--text-secondary)] mt-1">
-              Click each structural layer on the left to inspect its material composition and highlight the corresponding engineering parameters on the right.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Left Interactive 4-Layer Stack (6 cols) */}
-            <div className="lg:col-span-6 space-y-3">
-              {EXPLODED_LAYERS.map((layer) => {
-                const isSelected = activeLayer === layer.id;
-                return (
-                  <button
-                    key={layer.id}
-                    type="button"
-                    onClick={() => setActiveLayer(layer.id)}
-                    className={`w-full text-left p-5 border transition-all duration-300 ${
-                      isSelected
-                        ? 'bg-[var(--bg-elevated)] border-[var(--text-primary)] glow-box translate-x-1.5'
-                        : 'bg-[var(--bg-primary)] border-[var(--border-hairline)] hover:border-white/25'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between font-mono text-[11px] text-[#111111]">
-                      <span>{layer.code}</span>
-                      <Layers className="w-3.5 h-3.5" />
-                    </div>
-                    <div className="font-display font-medium text-base text-[var(--text-primary)] mt-1">
-                      {layer.title}
-                    </div>
-                    <p className="text-xs text-[var(--text-secondary)] mt-1.5 leading-relaxed">
-                      {layer.desc}
-                    </p>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Right Synchronized Monospace Parameter Table (6 cols) */}
-            <div className="lg:col-span-6 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] overflow-hidden">
-              <div className="px-5 py-3.5 border-b border-[var(--border-hairline)] flex items-center justify-between font-mono text-xs">
-                <span className="font-semibold text-[var(--text-primary)]">
-                  ENGINEERING SPECIFICATION TABLE
-                </span>
-                <span className="text-[#111111]">{product.itemNo}</span>
-              </div>
-
-              <dl className="divide-y divide-[var(--border-hairline)] font-mono text-xs">
-                {[
-                  {
-                    label: 'Cross-Section Geometry',
-                    value: `${product.size.w} × ${product.size.h} mm (${product.view} Emission)`,
-                    layer: 0,
-                  },
-                  {
-                    label: 'Encapsulation Material',
-                    value: 'Dow SILASTIC™ ET-7021 Optical Silicone Co-Extrusion',
-                    layer: 0,
-                  },
-                  {
-                    label: 'Operating / Storage Temp',
-                    value: '-25°C ~ +60°C (Max LED Pin 65°C)',
-                    layer: 0,
-                  },
-                  {
-                    label: 'Light Source & Binning',
-                    value: `${product.ledType} · ${product.ledsPerM} LEDs/m · ${product.sdcm}`,
-                    layer: 1,
-                  },
-                  {
-                    label: 'Rated Power & Voltage',
-                    value: `${product.wattOptions.join('W / ')}W/m · ${product.voltage}`,
-                    layer: 1,
-                  },
-                  {
-                    label: 'Luminous Flux & Efficacy',
-                    value: `Up to ${product.maxLumen} lm/m (${product.efficacy} lm/W) · ${product.cri}`,
-                    layer: 1,
-                  },
-                  {
-                    label: 'Control Protocols',
-                    value: product.controls.join(' · '),
-                    layer: 1,
-                  },
-                  {
-                    label: 'Ingress Protection & End Caps',
-                    value: `${product.ip} · Front / Side / Bottom / Solder-Free Entry`,
-                    layer: 2,
-                  },
-                  {
-                    label: 'Cutting Increment & Max Run',
-                    value: `Cut Unit: ${product.cutUnit} · Max Single-Feed: ${product.maxRun}`,
-                    layer: 2,
-                  },
-                  {
-                    label: 'Min. Bending Diameter',
-                    value: `≥ ${product.minBendDiameter} mm (Min. Radius ${product.minBendRadius} mm)`,
-                    layer: 3,
-                  },
-                  {
-                    label: 'Mounting Profiles & Warranty',
-                    value: `6063 Aluminium Profile / Clips · ${product.warranty} Warranty`,
-                    layer: 3,
-                  },
-                ].map((row) => {
-                  const highlighted = row.layer === activeLayer;
-                  return (
-                    <div
-                      key={row.label}
-                      className={`px-5 py-3 grid grid-cols-1 sm:grid-cols-12 gap-2 transition-colors ${
-                        highlighted
-                          ? 'bg-[#111111]/15 text-[var(--text-primary)]'
-                          : 'text-[var(--text-secondary)]'
-                      }`}
-                    >
-                      <dt className="sm:col-span-5 text-[var(--text-muted)]">{row.label}</dt>
-                      <dd className="sm:col-span-7 font-medium text-[var(--text-primary)]">
-                        {row.value}
-                      </dd>
-                    </div>
-                  );
-                })}
-              </dl>
-            </div>
-          </div>
-        </section>
-
-        {/* 3. Accessories, Wiring & Installation Precautions Visuals */}
-        {product.images.detail && product.images.detail.length > 0 && (
-          <section className="pt-8 border-t border-[var(--border-hairline)] space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-              <div>
-                <h2 className="font-display font-medium text-2xl text-[var(--text-primary)]">
-                  End Caps, Mounting Profiles & Installation Precautions
-                </h2>
-                <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1">
-                  Extracted directly from the official TYRIA engineering specification manual for {product.model}.
-                </p>
-              </div>
-              <span className="font-mono text-xs text-amber-700 flex items-center gap-1.5">
-                <AlertTriangle className="w-4 h-4" />
-                Follow two-person installation guidelines for runs &gt; 5m
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {product.images.detail.map((imgUrl, idx) => (
-                <div
-                  key={imgUrl}
-                  className="bg-[#07080B] border border-[var(--border-hairline)] p-3 space-y-2"
-                >
-                  <div className="font-mono text-[10px] text-[var(--text-muted)]">
-                    ENGINEERING SHEET 0{idx + 1} · {idx === 0 ? 'END CAPS & CABLE ENTRY' : idx === 1 ? 'ALUMINIUM PROFILE & CLIPS' : 'INSTALLATION DO & DON\'T'}
-                  </div>
-                  <img
-                    src={imgUrl}
-                    alt={`${product.model} engineering diagram ${idx + 1}`}
-                    loading="lazy"
-                    className="w-full h-72 object-contain bg-[#0D0F14]"
-                  />
+        {/* 2. Key numbers */}
+        {keyNumbers.length > 0 && (
+          <section className="mt-[14vh] grid grid-cols-2 gap-y-12 lg:grid-cols-4">
+            {keyNumbers.map((k) => (
+              <div key={k.l}>
+                <div className="font-display text-[clamp(44px,5.4vw,96px)] font-light leading-none tracking-[-0.06em] text-ink">
+                  <CountUp value={k.v} suffix={k.s} />
                 </div>
-              ))}
-            </div>
+                <div className="micro mt-3">{k.l}</div>
+              </div>
+            ))}
           </section>
         )}
 
-        {/* 4. Downloads Block: Datasheet PDF, IES, LDT & Test Reports */}
-        <section
-          id="downloads"
-          className="pt-8 border-t border-[var(--border-hairline)] space-y-6"
-        >
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-            <div>
-              <h2 className="font-display font-medium text-2xl text-[var(--text-primary)]">
-                Photometric IES / LDT & Specification Downloads
-              </h2>
-              <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1">
-                Download the complete PDF datasheet, DIALux/Relux <span className="font-mono">.IES</span> & <span className="font-mono">.LDT</span> files, and integrating sphere reports.
-              </p>
-            </div>
-            <Link
-              to="/designer-hub"
-              className="font-mono text-xs text-[#111111] hover:underline"
+        {/* 3. Section drawing + full specification */}
+        <section className="mt-[14vh] grid gap-10 lg:grid-cols-12">
+          <div className="relative flex min-h-[380px] items-center justify-center overflow-hidden rounded-card bg-paper lg:col-span-5">
+            <div
+              aria-hidden
+              className="absolute inset-0 [mask-image:radial-gradient(ellipse_60%_55%_at_50%_50%,#000_35%,transparent_80%)]"
+              style={{
+                backgroundImage:
+                  'linear-gradient(rgba(17,17,17,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(17,17,17,0.06) 1px, transparent 1px)',
+                backgroundSize: '28px 28px',
+                backgroundPosition: 'center',
+              }}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, rotate: -6 }}
+              whileInView={{ opacity: 1, scale: 1.5, rotate: 0 }}
+              viewport={{ once: true, margin: '-20% 0px' }}
+              transition={{ duration: 1.2, ease: SILK }}
+              className="relative text-ink"
             >
-              Browse All 259 IES Files in Designer Hub →
-            </Link>
+              <ProfileCrossSectionSVG w={product.size.w} h={product.size.h} view={product.view} scale={4.2} showDimensions />
+            </motion.div>
+            <span className="micro absolute bottom-5 left-5">Cross-section · to scale</span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Official Datasheet Card */}
-            <a
-              href={product.downloads.datasheet}
-              target="_blank"
-              rel="noreferrer"
-              className="p-5 bg-[var(--bg-elevated)] border border-[#111111]/50 hover:border-[#111111] flex flex-col justify-between gap-4"
-            >
-              <div>
-                <span className="font-mono text-[10px] text-[#111111] block">
-                  OFFICIAL DATASHEET (PDF)
-                </span>
-                <div className="font-display font-medium text-base text-[var(--text-primary)] mt-1">
-                  {product.model} Specification
-                </div>
-                <p className="text-xs text-[var(--text-secondary)] mt-1">
-                  Full electrical tables, cross-section drawings, end caps, wiring, and installation instructions.
-                </p>
-              </div>
-              <div className="inline-flex items-center gap-1.5 font-mono text-xs text-[#111111] font-semibold">
-                <FileText className="w-4 h-4" />
-                <span>Download PDF Datasheet →</span>
-              </div>
-            </a>
-
-            {/* IES & LDT Photometric Sets */}
-            {product.downloads.ies.length > 0 ? (
-              product.downloads.ies.slice(0, 6).map((ies, idx) => {
-                const matchingLdt = product.downloads.ldt[idx];
-                const matchingRep = product.downloads.report[idx];
-                return (
-                  <div
-                    key={ies.filename + idx}
-                    className="p-5 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] flex flex-col justify-between gap-4"
-                  >
-                    <div>
-                      <span className="font-mono text-[10px] text-[var(--text-primary)] block">
-                        PHOTOMETRIC PACKAGE · {ies.cct} · {ies.watt}
-                      </span>
-                      <div className="font-mono font-semibold text-xs text-[var(--text-primary)] mt-1 break-all">
-                        {ies.label}
-                      </div>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2 pt-2 border-t border-[var(--border-hairline)] font-mono text-[11px]">
-                      <a
-                        href={ies.url}
-                        download
-                        className="px-2.5 py-1 bg-[#111111] text-white flex items-center gap-1"
-                      >
-                        <Download className="w-3 h-3" /> .IES
-                      </a>
-                      {matchingLdt && (
-                        <a
-                          href={matchingLdt.url}
-                          download
-                          className="px-2.5 py-1 border border-[var(--border-hairline)] hover:border-white/30 text-[var(--text-primary)] flex items-center gap-1"
-                        >
-                          <Download className="w-3 h-3" /> .LDT
-                        </a>
-                      )}
-                      {matchingRep && (
-                        <a
-                          href={matchingRep.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="px-2.5 py-1 border border-[var(--border-hairline)] hover:border-white/30 text-[var(--text-secondary)] flex items-center gap-1"
-                        >
-                          <FileText className="w-3 h-3" /> Test Report
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                );
-              })
-            ) : (
-              <div className="md:col-span-3 p-5 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="space-y-1">
-                  <div className="font-display font-medium text-sm text-[var(--text-primary)] flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-[#111111]" />
-                    <span>Custom CCT & Wattage IES Photometric Files Available</span>
-                  </div>
-                  <p className="text-xs text-[var(--text-secondary)]">
-                    Access our central 259-file IES/LDT library in the Designer Hub or request a custom integrating sphere test for your exact project wattage.
-                  </p>
-                </div>
-                <Link
-                  to="/designer-hub"
-                  className="px-4 py-2 bg-[#111111] text-white font-mono text-xs shrink-0"
+          <div className="lg:col-span-7">
+            <div className="micro mb-5">Specification</div>
+            <dl className="grid gap-x-10 sm:grid-cols-2">
+              {specRows.map(([k, v], i) => (
+                <motion.div
+                  key={k}
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, ease: SILK, delay: (i % 6) * 0.04 }}
+                  className="flex items-baseline justify-between gap-4 rounded-2xl px-4 py-3 transition-colors hover:bg-stone/50"
                 >
-                  Open Designer Hub →
-                </Link>
-              </div>
+                  <dt className="text-[13px] text-mute">{k}</dt>
+                  <dd className="text-right text-[14px] text-ink">{v}</dd>
+                </motion.div>
+              ))}
+            </dl>
+            {product.features.length > 0 && (
+              <ul className="mt-10 space-y-3">
+                {product.features.map((f) => (
+                  <li key={f} className="flex gap-3 text-[14px] leading-relaxed text-graphite">
+                    <span className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-glow shadow-[0_0_8px_#FFC97A]" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
         </section>
 
-        {/* 5. Related Models */}
-        {relatedModels.length > 0 && (
-          <section className="pt-8 border-t border-[var(--border-hairline)] space-y-5">
-            <h2 className="font-display font-medium text-xl text-[var(--text-primary)]">
-              Related Architectural Profiles
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {relatedModels.map((rm) => (
-                <Link
-                  key={rm.id}
-                  to={`/product/${rm.id}`}
-                  className="p-4 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] hover:border-[var(--text-primary)] flex items-center justify-between gap-3"
-                >
-                  <div>
-                    <div className="font-display font-medium text-sm text-[var(--text-primary)]">
-                      {rm.model}
-                    </div>
-                    <div className="font-mono text-[11px] text-[var(--text-muted)]">
-                      {rm.size.w}×{rm.size.h}mm · {rm.ip}
-                    </div>
-                  </div>
-                  <ProfileCrossSectionSVG
-                    w={rm.size.w}
-                    h={rm.size.h}
-                    view={rm.view}
-                    scale={2.4}
-                    showDimensions={false}
-                  />
-                </Link>
-              ))}
+        {/* 4. Downloads */}
+        <section id="downloads" className="mt-[14vh]">
+          <div className="flex items-end justify-between gap-6">
+            <h2 className="font-display text-[clamp(32px,3.6vw,60px)] font-normal leading-none tracking-[-0.045em] text-ink">Files</h2>
+            <span className="micro">{files.length} downloads</span>
+          </div>
+          <div className="mt-8 grid gap-2 sm:grid-cols-2">
+            {files.slice(0, allFiles ? files.length : 8).map((f) => (
+              <a
+                key={f.u + f.k}
+                href={f.u}
+                target="_blank"
+                rel="noreferrer"
+                className="group flex items-center gap-4 rounded-full bg-stone/50 py-2 pl-2 pr-5 transition-all duration-500 ease-silk hover:bg-ink hover:text-canvas"
+              >
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-paper font-mono text-[10px] tracking-[0.06em] text-ink">
+                  {f.k}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-[14px]">{f.t}</span>
+                  <span className="block truncate font-mono text-[10.5px] text-mute group-hover:text-canvas/60">{f.s}</span>
+                </span>
+                <span className="transition-transform duration-500 ease-silk group-hover:translate-y-0.5">
+                  <Arrow down />
+                </span>
+              </a>
+            ))}
+          </div>
+          {files.length > 8 && (
+            <button type="button" onClick={() => setAllFiles((v) => !v)} className="pill-soft mt-6">
+              {allFiles ? 'Show fewer' : `Show all ${files.length} files`}
+            </button>
+          )}
+        </section>
+
+        {/* 5. Related: a horizontal drag rail */}
+        {related.length > 0 && (
+          <section className="mt-[14vh] pb-[6vh]">
+            <div className="flex items-end justify-between">
+              <h2 className="font-display text-[clamp(32px,3.6vw,60px)] font-normal leading-none tracking-[-0.045em] text-ink">Also in this range</h2>
+              <Link to={`/products/${product.familySlug}`} className="pill-soft hidden sm:inline-flex">View all</Link>
             </div>
           </section>
         )}
       </div>
+
+      {related.length > 0 && (
+        <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-[10vh] sm:px-10" data-lenis-prevent>
+          {related.map((r) => {
+            const photo = Boolean(r.images.hero) && !LIGHT_HEROES.has(r.id);
+            return (
+              <Link key={r.id} to={`/product/${r.id}`} className="group w-[240px] shrink-0 snap-start sm:w-[280px]">
+                <div className={`relative aspect-[4/5] overflow-hidden rounded-card ${photo ? 'bg-ink' : 'bg-stone/70'}`}>
+                  {photo ? (
+                    <img src={r.images.hero} alt={r.model} loading="lazy" className="h-full w-full object-cover transition-transform duration-[1200ms] ease-silk group-hover:scale-[1.06]" />
+                  ) : (
+                    <div className="flex h-full items-center justify-center text-ink">
+                      <ProfileCrossSectionSVG w={r.size.w} h={r.size.h} view={r.view} scale={3.6} showDimensions={false} />
+                    </div>
+                  )}
+                </div>
+                <div className="mt-3 px-1 font-display text-[18px] tracking-[-0.03em] text-ink">{r.model}</div>
+                <div className="micro mt-0.5 px-1">{r.series}</div>
+              </Link>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

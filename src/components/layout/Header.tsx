@@ -113,14 +113,14 @@ export const Header: React.FC = () => {
           <div onMouseEnter={openMega} onMouseLeave={closeMega}>
             <Link
               to="/products"
-              className={pillLink({ isActive: productsActive && !pathname.startsWith('/products/neon-flex') })}
+              className={pillLink({ isActive: productsActive })}
               onFocus={openMega}
             >
               Products
             </Link>
           </div>
           {NAV.map((n) => (
-            <NavLink key={n.to} to={n.to} className={pillLink}>
+            <NavLink key={n.to} to={n.to} className={({ isActive }) => pillLink({ isActive: isActive && n.label !== 'Profiles' })}>
               {n.label}
             </NavLink>
           ))}

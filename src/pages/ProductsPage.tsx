@@ -1,15 +1,6 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import {
-  Search,
-  FileText,
-  Download,
-  Plus,
-  Layers,
-  Image as ImageIcon,
-  RotateCcw,
-  ArrowLeftRight,
-} from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Product } from '../types/product';
 import { SEOHead } from '../components/common/SEOHead';
 import { ProfileCrossSectionSVG } from '../components/products/ProfileCrossSectionSVG';
@@ -17,392 +8,378 @@ import { useInquiry } from '../context/InquiryContext';
 import lightHeroes from '../data/light_heroes.json';
 
 const LIGHT_HEROES = new Set<string>(lightHeroes as string[]);
+const SILK = [0.22, 1, 0.36, 1] as const;
+
+const FAMILIES = [
+  { slug: 'all', label: 'All', title: 'All products' },
+  { slug: 'neon-flex', label: 'Neon Flex', title: 'LED Neon Flex' },
+  { slug: 'led-strip', label: 'LED Strip', title: 'LED Strip' },
+  { slug: 'wall-grazer', label: 'Wall Grazer', title: 'Wall Grazer' },
+  { slug: 'led-sheet', label: 'LED Sheet', title: 'Backlit LED Sheet' },
+];
+
+const VIEWS = ['TV', 'SV', '360', '3D', 'Dome', 'Dual', 'Embedded', 'Anti-Glare', 'COB', 'Strip'];
+const IPS = ['IP68', 'IP67', 'IP65', 'IP20'];
+const CONTROLS = [
+  { key: 'Single', label: 'Single colour' },
+  { key: 'Tunable', label: 'Tunable white' },
+  { key: 'RGB', label: 'RGB / RGBW' },
+  { key: 'DMX', label: 'DMX512' },
+  { key: 'SPI', label: 'SPI' },
+];
+
+const sizeLabel = (p: Product) =>
+  p.view === '360' ? `Ø ${p.size.w} mm` : p.view === 'Sheet' ? `${p.size.w} × ${p.size.h} mm` : `${p.size.w} × ${p.size.h} mm`;
+
+function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`whitespace-nowrap rounded-full px-4 py-2 text-[13px] transition-all duration-500 ease-silk ${
+        active ? 'bg-ink text-canvas' : 'bg-stone/60 text-graphite hover:bg-stone hover:text-ink'
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function ProductCard({ p, onAdd }: { p: Product; onAdd: () => void }) {
+  const showPhoto = Boolean(p.images?.hero) && !LIGHT_HEROES.has(p.id);
+  return (
+    <motion.article
+      layout
+      initial={{ opacity: 0, y: 30, scale: 0.97 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.94, transition: { duration: 0.3 } }}
+      transition={{ duration: 0.7, ease: SILK }}
+      className="group"
+    >
+      <Link
+        to={`/product/${p.id}`}
+        className={`relative block aspect-[4/5] overflow-hidden rounded-card ${showPhoto ? 'bg-ink' : 'bg-stone/70'}`}
+      >
+        {showPhoto ? (
+          <img
+            src={p.images.hero}
+            alt={p.model}
+            loading="lazy"
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] ease-silk group-hover:scale-[1.06]"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center text-ink transition-transform duration-[1400ms] ease-silk group-hover:scale-[1.08]">
+            <ProfileCrossSectionSVG w={p.size.w} h={p.size.h} view={p.view} scale={4.2} showDimensions={false} />
+          </div>
+        )}
+
+        {/* X-ray: a frosted sheet rises on hover with the true-scale section and key numbers */}
+        <div className="absolute inset-x-3 bottom-3 translate-y-[calc(100%+16px)] rounded-[22px] bg-canvas/85 p-4 text-ink opacity-0 backdrop-blur-xl transition-all duration-700 ease-silk group-hover:translate-y-0 group-hover:opacity-100">
+          <div className="flex items-center gap-4">
+            <div className="grid h-16 w-20 shrink-0 place-items-center">
+              <ProfileCrossSectionSVG w={p.size.w} h={p.size.h} view={p.view} scale={2} showDimensions={false} />
+            </div>
+            <dl className="grid flex-1 grid-cols-2 gap-x-3 gap-y-1.5 text-[12px]">
+              <div>
+                <dt className="micro !text-[9.5px]">Size</dt>
+                <dd>{sizeLabel(p)}</dd>
+              </div>
+              <div>
+                <dt className="micro !text-[9.5px]">Power</dt>
+                <dd>{p.wattOptions.length ? `${p.wattOptions.slice(0, 3).join(' / ')} W/m` : '—'}</dd>
+              </div>
+              <div>
+                <dt className="micro !text-[9.5px]">Voltage</dt>
+                <dd>{p.voltage}</dd>
+              </div>
+              <div>
+                <dt className="micro !text-[9.5px]">Rating</dt>
+                <dd>{p.ip}</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <span
+          className={`absolute left-4 top-4 rounded-full px-3 py-1 font-mono text-[10px] uppercase tracking-[0.08em] backdrop-blur-md ${
+            showPhoto ? 'bg-canvas/15 text-canvas/85' : 'bg-canvas/70 text-graphite'
+          }`}
+        >
+          {p.ip}
+        </span>
+      </Link>
+      <div className="flex items-start justify-between gap-4 px-1 pt-4">
+        <div className="min-w-0">
+          <div className="micro truncate">{p.series}</div>
+          <Link
+            to={`/product/${p.id}`}
+            className="mt-1 block truncate font-display text-[20px] leading-tight tracking-[-0.03em] text-ink"
+          >
+            {p.model}
+          </Link>
+        </div>
+        <button
+          type="button"
+          onClick={onAdd}
+          className="mt-1 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-stone/70 text-ink transition-all duration-500 ease-silk hover:scale-110 hover:bg-ink hover:text-canvas"
+          aria-label={`Add ${p.model} to sample request`}
+          title="Add to sample request"
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M6 1.5v9M1.5 6h9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+          </svg>
+        </button>
+      </div>
+    </motion.article>
+  );
+}
 
 interface ProductsPageProps {
   products: Product[];
 }
 
 export const ProductsPage: React.FC<ProductsPageProps> = ({ products }) => {
-  const { family, series } = useParams<{ family?: string; series?: string }>();
+  const { family = 'all', series = 'all' } = useParams<{ family?: string; series?: string }>();
+  const navigate = useNavigate();
   const { addItem } = useInquiry();
 
-  const [selectedFamily, setSelectedFamily] = useState<string>(family || 'ALL');
-  const [selectedSeries, setSelectedSeries] = useState<string>(series || 'ALL');
-  const [selectedView, setSelectedView] = useState<string>('ALL');
-  const [selectedIp, setSelectedIp] = useState<string>('ALL');
-  const [selectedControl, setSelectedControl] = useState<string>('ALL');
-  const [maxWidth, setMaxWidth] = useState<number>(60);
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [cardVisualMode, setCardVisualMode] = useState<'both' | 'section' | 'photo'>('photo');
+  const [view, setView] = useState('all');
+  const [ip, setIp] = useState('all');
+  const [control, setControl] = useState('all');
+  const [maxWidth, setMaxWidth] = useState(60);
+  const [query, setQuery] = useState('');
+  const [refineOpen, setRefineOpen] = useState(false);
 
-  useEffect(() => {
-    setSelectedFamily(family || 'ALL');
-    setSelectedSeries(series || 'ALL');
-  }, [family, series]);
+  const fam = FAMILIES.find((f) => f.slug === family) ?? FAMILIES[0];
 
-  const availableSeries = useMemo(() => {
+  const seriesList = useMemo(() => {
     const map = new Map<string, string>();
     products.forEach((p) => {
-      if (selectedFamily === 'ALL' || p.familySlug === selectedFamily) {
-        map.set(p.seriesSlug, p.series);
-      }
+      if (family === 'all' || p.familySlug === family) map.set(p.seriesSlug, p.series);
     });
     return Array.from(map.entries());
-  }, [products, selectedFamily]);
+  }, [products, family]);
 
-  const filteredProducts = useMemo(() => {
-    return products.filter((p) => {
-      if (selectedFamily !== 'ALL' && p.familySlug !== selectedFamily) return false;
-      if (selectedSeries !== 'ALL' && p.seriesSlug !== selectedSeries) return false;
-      if (selectedView !== 'ALL' && p.view !== selectedView) return false;
-      if (selectedIp !== 'ALL' && !p.ip.includes(selectedIp)) return false;
-      if (
-        selectedControl !== 'ALL' &&
-        !p.controls.some((c) => c.toLowerCase().includes(selectedControl.toLowerCase()))
-      ) {
-        return false;
-      }
-      if (maxWidth < 60 && p.size.w > maxWidth && p.view !== 'Sheet') return false;
-      if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
-        const hay = `${p.model} ${p.itemNo} ${p.series} ${p.family} ${p.pitch}`.toLowerCase();
-        if (!hay.includes(q)) return false;
-      }
-      return true;
-    });
-  }, [
-    products,
-    selectedFamily,
-    selectedSeries,
-    selectedView,
-    selectedIp,
-    selectedControl,
-    maxWidth,
-    searchQuery,
-  ]);
+  const filtered = useMemo(
+    () =>
+      products.filter((p) => {
+        if (family !== 'all' && p.familySlug !== family) return false;
+        if (series !== 'all' && p.seriesSlug !== series) return false;
+        if (view !== 'all' && p.view !== view) return false;
+        if (ip !== 'all' && !p.ip.includes(ip)) return false;
+        if (control !== 'all' && !p.controls.some((c) => c.toLowerCase().includes(control.toLowerCase()))) return false;
+        if (maxWidth < 60 && p.size.w > maxWidth && p.view !== 'Sheet') return false;
+        if (query.trim()) {
+          const hay = `${p.model} ${p.itemNo} ${p.series} ${p.family}`.toLowerCase();
+          if (!hay.includes(query.trim().toLowerCase())) return false;
+        }
+        return true;
+      }),
+    [products, family, series, view, ip, control, maxWidth, query],
+  );
 
-  const resetFilters = () => {
-    setSelectedFamily('ALL');
-    setSelectedSeries('ALL');
-    setSelectedView('ALL');
-    setSelectedIp('ALL');
-    setSelectedControl('ALL');
+  const refineCount = [view, ip, control].filter((v) => v !== 'all').length + (maxWidth < 60 ? 1 : 0);
+  const reset = () => {
+    setView('all');
+    setIp('all');
+    setControl('all');
     setMaxWidth(60);
-    setSearchQuery('');
+    setQuery('');
   };
+  const go = (f: string, s = 'all') => navigate(f === 'all' ? '/products' : s === 'all' ? `/products/${f}` : `/products/${f}/${s}`);
+  const seriesName = seriesList.find(([s]) => s === series)?.[1];
 
   return (
-    <div className="min-h-screen py-12 bg-[var(--bg-primary)]">
+    <div className="min-h-screen pb-[14vh] pt-32">
       <SEOHead
-        title={
-          selectedSeries !== 'ALL'
-            ? `${selectedSeries.toUpperCase()} — Architectural Linear Catalogue`
-            : 'All LED Neon Flex, LED Strips & Wall Grazers'
-        }
-        description="Browse 115+ TYRIA Lighting silicone LED neon flex profiles, 160–180 lm/W LED strips, COB strips, and flexible wall grazers with true-scale cross-sections, datasheets, and IES files."
-        canonicalPath={family ? `/products/${family}${series ? `/${series}` : ''}` : '/products'}
+        title={seriesName ? `${seriesName} · ${fam.title}` : fam.title}
+        description="Browse Tyria Lighting silicone LED neon flex, LED strips, wall grazers and backlit LED sheets with true-scale cross-sections, datasheets and IES files."
+        canonicalPath={family !== 'all' ? `/products/${family}${series !== 'all' ? `/${series}` : ''}` : '/products'}
       />
 
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-8 space-y-8">
-        {/* Top Page Title & Visual Mode Bar */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b border-[var(--border-hairline)]">
+      <div className="mx-auto max-w-[1600px] px-5 sm:px-10">
+        {/* Title */}
+        <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
           <div>
-            <h1 className="font-display font-medium text-3xl sm:text-4xl tracking-tight text-[var(--text-primary)]">
-              Architectural Product Catalogue
-            </h1>
-            <p className="text-sm text-[var(--text-secondary)] mt-2 max-w-[66ch]">
-              Filter by profile dimension, emitting geometry, IP rating, or control protocol. Every card renders a live 1:1 cross-section alongside direct Datasheet PDF and IES photometric downloads.
-            </p>
+            <div className="micro mb-5">Catalogue</div>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.h1
+                key={fam.slug + series}
+                initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
+                transition={{ duration: 0.6, ease: SILK }}
+                className="font-display text-[clamp(48px,8vw,136px)] font-light leading-[0.92] tracking-[-0.06em] text-ink"
+              >
+                {seriesName ?? fam.title}
+              </motion.h1>
+            </AnimatePresence>
           </div>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="inline-flex border border-[var(--border-hairline)] bg-[var(--bg-elevated)] p-0.5 font-mono text-xs">
-              <button
-                type="button"
-                onClick={() => setCardVisualMode('both')}
-                className={`px-3 py-1.5 ${
-                  cardVisualMode === 'both'
-                    ? 'bg-[#111111] text-white'
-                    : 'text-[var(--text-secondary)]'
-                }`}
-              >
-                Photo + 1:1 Section
-              </button>
-              <button
-                type="button"
-                onClick={() => setCardVisualMode('section')}
-                className={`px-3 py-1.5 flex items-center gap-1 ${
-                  cardVisualMode === 'section'
-                    ? 'bg-[#111111] text-white'
-                    : 'text-[var(--text-secondary)]'
-                }`}
-              >
-                <Layers className="w-3.5 h-3.5" /> 1:1 Section
-              </button>
-              <button
-                type="button"
-                onClick={() => setCardVisualMode('photo')}
-                className={`px-3 py-1.5 flex items-center gap-1 ${
-                  cardVisualMode === 'photo'
-                    ? 'bg-[#111111] text-white'
-                    : 'text-[var(--text-secondary)]'
-                }`}
-              >
-                <ImageIcon className="w-3.5 h-3.5" /> Studio Photo
-              </button>
-            </div>
-
-            <Link
-              to="/products/neon-flex/atlas"
-              className="px-3.5 py-2 border border-[var(--border-hairline)] bg-[var(--bg-elevated)] hover:border-[var(--text-primary)] font-mono text-xs text-[var(--text-primary)]"
+          <div className="pb-2 text-right">
+            <motion.div
+              key={filtered.length}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="font-display text-[44px] font-light tabular-nums tracking-[-0.05em] text-ink"
             >
-              Open 1:1 Profile Atlas →
-            </Link>
+              {filtered.length}
+            </motion.div>
+            <div className="micro">Models</div>
           </div>
         </div>
 
-        {/* 12-Col Layout: Sticky Filter Panel (3 cols) + Product Cards Grid (9 cols) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left Sticky Filter Panel */}
-          <aside className="lg:col-span-3 lg:sticky lg:top-24 pr-4 space-y-6">
-            <div className="flex items-center justify-between border-b border-[var(--border-hairline)] pb-3">
-              <span className="font-mono text-xs font-semibold text-[var(--text-primary)]">
-                SPECIFICATION FILTERS ({filteredProducts.length})
-              </span>
+        {/* Family switch with a sliding pill */}
+        <LayoutGroup>
+          <div className="no-scrollbar mt-12 flex gap-1 overflow-x-auto rounded-full bg-stone/60 p-1 sm:inline-flex">
+            {FAMILIES.map((f) => (
               <button
+                key={f.slug}
                 type="button"
-                onClick={resetFilters}
-                className="inline-flex items-center gap-1 font-mono text-[11px] text-[#111111] hover:underline"
+                onClick={() => go(f.slug)}
+                className="relative whitespace-nowrap rounded-full px-5 py-2.5 text-[14px]"
               >
-                <RotateCcw className="w-3 h-3" /> Reset
-              </button>
-            </div>
-
-            {/* Search Input */}
-            <div className="relative">
-              <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search model (e.g. 1617, R40, COB)..."
-                className="w-full pl-9 pr-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-hairline)] font-mono text-xs text-[var(--text-primary)]"
-              />
-            </div>
-
-            {/* Product Family */}
-            <div>
-              <label className="block font-mono text-[10px] text-[var(--text-muted)] mb-1.5">
-                PRODUCT FAMILY
-              </label>
-              <div className="space-y-1 font-mono text-xs">
-                {[
-                  { slug: 'ALL', label: 'All Product Families' },
-                  { slug: 'neon-flex', label: 'LED Neon Flex' },
-                  { slug: 'led-strip', label: 'Architectural LED Strip' },
-                  { slug: 'wall-grazer', label: 'Flexible Wall Grazer' },
-                  { slug: 'led-sheet', label: 'Flex LED Backlit Sheet' },
-                ].map((f) => (
-                  <button
-                    key={f.slug}
-                    type="button"
-                    onClick={() => {
-                      setSelectedFamily(f.slug);
-                      setSelectedSeries('ALL');
-                    }}
-                    className={`w-full text-left px-2.5 py-1.5 border transition-colors ${
-                      selectedFamily === f.slug
-                        ? 'border-[#111111] bg-[#111111]/15 text-[var(--text-primary)] font-semibold'
-                        : 'border-transparent hover:bg-[var(--bg-surface)] text-[var(--text-secondary)]'
-                    }`}
-                  >
-                    {f.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Sub-Series */}
-            <div>
-              <label className="block font-mono text-[10px] text-[var(--text-muted)] mb-1.5">
-                SERIES ({availableSeries.length})
-              </label>
-              <select
-                value={selectedSeries}
-                onChange={(e) => setSelectedSeries(e.target.value)}
-                className="w-full px-2.5 py-2 bg-[var(--bg-primary)] border border-[var(--border-hairline)] font-mono text-xs text-[var(--text-primary)]"
-              >
-                <option value="ALL">All Series</option>
-                {availableSeries.map(([slug, label]) => (
-                  <option key={slug} value={slug}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Emitting View */}
-            <div>
-              <label className="block font-mono text-[10px] text-[var(--text-muted)] mb-1.5">
-                EMITTING ORIENTATION
-              </label>
-              <div className="grid grid-cols-2 gap-1.5 font-mono text-[11px]">
-                {['ALL', 'TV', 'SV', '360', '3D', 'Dome', 'Dual', 'Embedded', 'Anti-Glare', 'COB'].map(
-                  (v) => (
-                    <button
-                      key={v}
-                      type="button"
-                      onClick={() => setSelectedView(v)}
-                      className={`px-2 py-1 border text-center ${
-                        selectedView === v
-                          ? 'border-[#111111] bg-[#111111]/15 text-[var(--text-primary)] font-semibold'
-                          : 'border-[var(--border-hairline)] bg-[var(--bg-primary)] text-[var(--text-secondary)]'
-                      }`}
-                    >
-                      {v}
-                    </button>
-                  )
+                {family === f.slug && (
+                  <motion.span
+                    layoutId="family-pill"
+                    transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                    className="absolute inset-0 rounded-full bg-paper shadow-[0_6px_20px_-10px_rgba(17,17,17,0.35)]"
+                  />
                 )}
-              </div>
-            </div>
-
-            {/* Max Width Slider */}
-            <div>
-              <div className="flex justify-between font-mono text-[11px] mb-1">
-                <span className="text-[var(--text-muted)]">MAX WIDTH</span>
-                <span className="text-[var(--text-primary)]">
-                  {maxWidth >= 60 ? 'Any Width' : `≤ ${maxWidth} mm`}
+                <span className={`relative transition-colors duration-300 ${family === f.slug ? 'text-ink' : 'text-graphite hover:text-ink'}`}>
+                  {f.label}
                 </span>
-              </div>
-              <input
-                type="range"
-                min={4}
-                max={60}
-                step={2}
-                value={maxWidth}
-                onChange={(e) => setMaxWidth(Number(e.target.value))}
-                className="w-full accent-[#111111]"
-              />
-            </div>
+              </button>
+            ))}
+          </div>
+        </LayoutGroup>
 
-            {/* Control Protocol & IP */}
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="block font-mono text-[10px] text-[var(--text-muted)] mb-1">
-                  IP RATING
-                </label>
-                <select
-                  value={selectedIp}
-                  onChange={(e) => setSelectedIp(e.target.value)}
-                  className="w-full px-2 py-1.5 bg-[var(--bg-primary)] border border-[var(--border-hairline)] font-mono text-xs text-[var(--text-primary)]"
-                >
-                  <option value="ALL">All IP</option>
-                  <option value="IP68">IP68</option>
-                  <option value="IP67">IP67</option>
-                  <option value="IP65">IP65</option>
-                  <option value="IP20">IP20</option>
-                </select>
-              </div>
-              <div>
-                <label className="block font-mono text-[10px] text-[var(--text-muted)] mb-1">
-                  CONTROL
-                </label>
-                <select
-                  value={selectedControl}
-                  onChange={(e) => setSelectedControl(e.target.value)}
-                  className="w-full px-2 py-1.5 bg-[var(--bg-primary)] border border-[var(--border-hairline)] font-mono text-xs text-[var(--text-primary)]"
-                >
-                  <option value="ALL">All Controls</option>
-                  <option value="Single">Single Color</option>
-                  <option value="Tunable">Tunable CCT</option>
-                  <option value="RGB">RGB / RGBW</option>
-                  <option value="DMX">DMX512</option>
-                  <option value="SPI">SPI Pixel</option>
-                </select>
-              </div>
-            </div>
-          </aside>
-
-          {/* Right Product Grid (9 cols) */}
-          <div className="lg:col-span-9">
-            {filteredProducts.length === 0 ? (
-              <div className="p-12 bg-[var(--bg-elevated)] border border-[var(--border-hairline)] text-center space-y-3">
-                <div className="font-display font-medium text-lg text-[var(--text-primary)]">
-                  No Profiles Match Current Filter Combination
-                </div>
-                <p className="text-xs text-[var(--text-secondary)]">
-                  Reset filters or contact our engineering team for custom silicone extrusion tooling.
-                </p>
-                <button
-                  type="button"
-                  onClick={resetFilters}
-                  className="px-4 py-2 bg-[#111111] text-white font-mono text-xs"
-                >
-                  Reset All Filters
-                </button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-14">
-                {filteredProducts.map((p) => {
-                  const showPhoto = cardVisualMode !== 'section' && p.images?.hero && !LIGHT_HEROES.has(p.id);
-                  return (
-                    <article key={p.id} className="group">
-                      <Link
-                        to={`/product/${p.id}`}
-                        className="relative block aspect-[4/5] rounded-[20px] overflow-hidden bg-[#111111] [transform:perspective(1200px)] transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:[transform:perspective(1200px)_rotateX(2deg)_translateY(-4px)]"
-                      >
-                        {showPhoto ? (
-                          <img
-                            src={p.images.hero}
-                            alt={p.model}
-                            loading="lazy"
-                            width={600}
-                            height={750}
-                            className="absolute inset-0 w-full h-full object-cover scale-[1.04] transition-transform duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-100"
-                          />
-                        ) : (
-                          <div className="absolute inset-0 flex items-center justify-center bg-[#E9E6DF]">
-                            <ProfileCrossSectionSVG w={p.size.w} h={p.size.h} view={p.view} scale={4.2} />
-                          </div>
-                        )}
-                        {cardVisualMode === 'both' && showPhoto && (
-                          <div className="absolute left-4 bottom-4 rounded-xl bg-[#F5F4F0]/90 backdrop-blur px-3 pt-3 pb-2">
-                            <ProfileCrossSectionSVG w={p.size.w} h={p.size.h} view={p.view} scale={2.2} />
-                          </div>
-                        )}
-                        <span className={`absolute right-4 top-4 font-mono text-[10px] tracking-[0.08em] uppercase ${showPhoto ? 'text-[#F5F4F0]/70' : 'text-[#8C8A84]'}`}>
-                          {p.size.w}×{p.size.h} mm
-                        </span>
-                      </Link>
-                      <div className="pt-5 flex items-start justify-between gap-4">
-                        <div className="min-w-0">
-                          <div className="spec-label truncate">{p.series}</div>
-                          <Link
-                            to={`/product/${p.id}`}
-                            className="mt-1.5 block font-display text-[20px] leading-tight tracking-[-0.03em] text-[#111111] truncate"
-                          >
-                            {p.model}
-                          </Link>
-                          <div className="mt-2 font-mono text-[11px] tracking-[0.04em] text-[#8C8A84] truncate">
-                            {p.voltage} · {p.wattOptions.slice(0, 3).join('/')} W/m · {p.ip}
-                          </div>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => addItem(p)}
-                          className="shrink-0 mt-1 w-9 h-9 rounded-full border border-[rgba(17,17,17,0.15)] text-[#111111] flex items-center justify-center hover:bg-[#111111] hover:text-[#F5F4F0] transition-colors"
-                          aria-label={`Add ${p.model} to sample request`}
-                          title="Add to sample request"
-                        >
-                          <Plus className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </article>
-                  );
-                })}
-              </div>
+        {/* Series + tools */}
+        <div className="mt-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 lg:mx-0 lg:flex-wrap lg:px-0">
+            {family !== 'all' && (
+              <>
+                <Chip active={series === 'all'} onClick={() => go(family)}>
+                  All series
+                </Chip>
+                {seriesList.map(([slug, label]) => (
+                  <Chip key={slug} active={series === slug} onClick={() => go(family, slug)}>
+                    {label}
+                  </Chip>
+                ))}
+              </>
             )}
           </div>
+          <div className="flex shrink-0 items-center gap-2">
+            <label className="relative flex h-11 items-center rounded-full bg-stone/60 pl-11 pr-4 transition-colors focus-within:bg-paper focus-within:shadow-[0_8px_24px_-14px_rgba(17,17,17,0.4)]">
+              <svg className="absolute left-4 text-mute" width="15" height="15" viewBox="0 0 16 16" fill="none">
+                <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.4" />
+                <path d="M11 11l3.5 3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+              </svg>
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search 1617, R40, COB…"
+                className="w-[170px] bg-transparent text-[14px] text-ink placeholder:text-mute focus:outline-none sm:w-[210px]"
+              />
+            </label>
+            <button
+              type="button"
+              onClick={() => setRefineOpen((o) => !o)}
+              className={`pill h-11 ${refineOpen || refineCount ? 'bg-ink text-canvas' : 'bg-stone/60 text-ink hover:bg-stone'}`}
+              aria-expanded={refineOpen}
+            >
+              Refine
+              {refineCount > 0 && (
+                <span className="grid h-5 min-w-5 place-items-center rounded-full bg-canvas px-1.5 text-[11px] text-ink">{refineCount}</span>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Refine drawer */}
+        <AnimatePresence initial={false}>
+          {refineOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.6, ease: SILK }}
+              className="overflow-hidden"
+            >
+              <div className="mt-5 grid gap-8 rounded-card bg-paper p-6 shadow-[0_30px_60px_-40px_rgba(17,17,17,0.35)] sm:p-8 lg:grid-cols-[1.4fr_1fr_1fr]">
+                <div>
+                  <div className="micro mb-3">Light output</div>
+                  <div className="flex flex-wrap gap-2">
+                    <Chip active={view === 'all'} onClick={() => setView('all')}>Any</Chip>
+                    {VIEWS.map((v) => (
+                      <Chip key={v} active={view === v} onClick={() => setView(v)}>{v}</Chip>
+                    ))}
+                  </div>
+                </div>
+                <div className="space-y-6">
+                  <div>
+                    <div className="micro mb-3">Ingress rating</div>
+                    <div className="flex flex-wrap gap-2">
+                      <Chip active={ip === 'all'} onClick={() => setIp('all')}>Any</Chip>
+                      {IPS.map((v) => (
+                        <Chip key={v} active={ip === v} onClick={() => setIp(v)}>{v}</Chip>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="mb-3 flex justify-between">
+                      <span className="micro">Max width</span>
+                      <span className="text-[13px] text-ink">{maxWidth >= 60 ? 'Any' : `≤ ${maxWidth} mm`}</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={4}
+                      max={60}
+                      step={2}
+                      value={maxWidth}
+                      onChange={(e) => setMaxWidth(Number(e.target.value))}
+                      className="w-full accent-[#111111]"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div className="micro mb-3">Control</div>
+                  <div className="flex flex-wrap gap-2">
+                    <Chip active={control === 'all'} onClick={() => setControl('all')}>Any</Chip>
+                    {CONTROLS.map((c) => (
+                      <Chip key={c.key} active={control === c.key} onClick={() => setControl(c.key)}>{c.label}</Chip>
+                    ))}
+                  </div>
+                  <button type="button" onClick={reset} className="mt-8 text-[13px] text-graphite underline-offset-4 hover:text-ink hover:underline">
+                    Clear all
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Grid: cards reflow smoothly when filters change */}
+        <div className="mt-14">
+          {filtered.length === 0 ? (
+            <div className="rounded-card bg-paper px-6 py-20 text-center">
+              <div className="font-display text-[28px] tracking-[-0.03em] text-ink">Nothing matches yet.</div>
+              <p className="mx-auto mt-3 max-w-[44ch] text-[14px] text-graphite">
+                Loosen a filter, or ask us: custom silicone extrusions are part of what we do.
+              </p>
+              <button type="button" onClick={reset} className="pill-ink mt-8">
+                Clear filters
+              </button>
+            </div>
+          ) : (
+            <motion.div layout className="grid grid-cols-1 gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+              <AnimatePresence mode="popLayout">
+                {filtered.map((p) => (
+                  <ProductCard key={p.id} p={p} onAdd={() => addItem(p)} />
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          )}
         </div>
       </div>
     </div>
