@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import Lenis from 'lenis';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { InquiryProvider } from './context/InquiryContext';
@@ -45,17 +45,23 @@ const SmoothScroll: React.FC = () => {
 
 const ScrollToTop: React.FC = () => {
   const { pathname } = useLocation();
-  useEffect(() => {
+  useLayoutEffect(() => {
     if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual';
+    // Lenis may still be gliding towards the previous page's target, so stop it before resetting.
     const top = () => {
+      lenis?.stop();
       window.scrollTo(0, 0);
       lenis?.resize();
       lenis?.scrollTo(0, { immediate: true, force: true });
+      lenis?.start();
     };
     top();
-    // Again after the new page has laid out, so a taller previous page cannot leave us mid-way.
     const id = requestAnimationFrame(() => requestAnimationFrame(top));
-    return () => cancelAnimationFrame(id);
+    const t = window.setTimeout(top, 120);
+    return () => {
+      cancelAnimationFrame(id);
+      window.clearTimeout(t);
+    };
   }, [pathname]);
   return null;
 };

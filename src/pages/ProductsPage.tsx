@@ -1,4 +1,8 @@
 import React, { useMemo, useState } from 'react';
+import plainHeroes from '../data/plain_heroes.json';
+
+// Products whose only photo is a datasheet shot on white. They go after the studio photos.
+const PLAIN = new Set<string>(plainHeroes);
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Product } from '../types/product';
@@ -174,7 +178,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ products }) => {
           if (!hay.includes(query.trim().toLowerCase())) return false;
         }
         return true;
-      }),
+      }).sort((a, b) => Number(PLAIN.has(a.id)) - Number(PLAIN.has(b.id))),
     [products, family, series, view, ip, control, maxWidth, query],
   );
 
