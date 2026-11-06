@@ -27,6 +27,15 @@ export default {
       letterSpacing: {
         tightest: '-0.045em',
       },
+      borderRadius: {
+        card: '28px',
+      },
+      keyframes: {
+        marquee: { from: { transform: 'translateX(0)' }, to: { transform: 'translateX(-50%)' } },
+      },
+      transitionTimingFunction: {
+        silk: 'cubic-bezier(0.22, 1, 0.36, 1)',
+      },
     },
   },
   plugins: [],

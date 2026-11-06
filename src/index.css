@@ -100,6 +100,27 @@ a { text-underline-offset: 4px; }
   box-shadow: 0 30px 60px -30px rgba(17, 17, 17, 0.25);
 }
 
+@layer components {
+  .micro {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .pill {
+    @apply inline-flex items-center justify-center gap-2 rounded-full h-10 px-5 text-[14px] font-medium transition-all duration-500 ease-silk;
+  }
+  .pill-ink {
+    @apply pill bg-ink text-canvas hover:scale-[1.03] active:scale-[0.98];
+  }
+  .pill-soft {
+    @apply pill bg-stone/70 text-ink hover:bg-stone;
+  }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { scrollbar-width: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

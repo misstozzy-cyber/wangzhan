@@ -9,9 +9,6 @@ interface InquiryContextValue {
   clearBasket: () => void;
   isDrawerOpen: boolean;
   setIsDrawerOpen: (open: boolean) => void;
-  compareIds: string[];
-  toggleCompare: (productId: string) => void;
-  clearCompare: () => void;
   leadProfile: LeadProfile | null;
   saveLeadProfile: (lead: Omit<LeadProfile, 'unlockedAt'>) => void;
 }
@@ -32,7 +29,6 @@ export const InquiryProvider: React.FC<{ children: React.ReactNode }> = ({ child
   });
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [compareIds, setCompareIds] = useState<string[]>([]);
 
   const [leadProfile, setLeadProfile] = useState<LeadProfile | null>(() => {
     try {
@@ -96,20 +92,6 @@ export const InquiryProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const clearBasket = () => setItems([]);
 
-  const toggleCompare = (productId: string) => {
-    setCompareIds((prev) => {
-      if (prev.includes(productId)) {
-        return prev.filter((id) => id !== productId);
-      }
-      if (prev.length >= 4) {
-        return [...prev.slice(1), productId];
-      }
-      return [...prev, productId];
-    });
-  };
-
-  const clearCompare = () => setCompareIds([]);
-
   const saveLeadProfile = (lead: Omit<LeadProfile, 'unlockedAt'>) => {
     const profile: LeadProfile = {
       ...lead,
@@ -133,9 +115,6 @@ export const InquiryProvider: React.FC<{ children: React.ReactNode }> = ({ child
         clearBasket,
         isDrawerOpen,
         setIsDrawerOpen,
-        compareIds,
-        toggleCompare,
-        clearCompare,
         leadProfile,
         saveLeadProfile,
       }}

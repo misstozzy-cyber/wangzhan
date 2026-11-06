@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const CERTIFICATIONS = ['ISO 9001', 'ISO 14001', 'ISO 45001', 'ETL', 'TÜV-CE', 'UKCA', 'RCM', 'RoHS', 'LM-80', 'ErP'];
 
@@ -11,33 +11,33 @@ const COLUMNS = [
       { label: 'LED Strip', to: '/products/led-strip' },
       { label: 'Wall Grazer', to: '/products/wall-grazer' },
       { label: 'Backlit LED Sheet', to: '/products/led-sheet' },
-      { label: 'Profile Atlas', to: '/products/neon-flex/atlas' },
     ],
   },
   {
     title: 'Resources',
     links: [
-      { label: 'Spec Finder', to: '/spec-finder' },
-      { label: 'IES & LDT Files', to: '/designer-hub' },
-      { label: 'Applications', to: '/applications' },
+      { label: 'Datasheets', to: '/downloads' },
+      { label: 'IES & LDT Files', to: '/downloads' },
+      { label: 'Catalogues', to: '/downloads' },
     ],
   },
   {
     title: 'Company',
     links: [
       { label: 'About', to: '/about' },
-      { label: 'Factory', to: '/factory' },
       { label: 'Contact', to: '/contact' },
     ],
   },
 ];
 
 export const Footer: React.FC = () => {
+  const { pathname } = useLocation();
+  const isHome = pathname === '/';
   return (
     <footer className="bg-[#F5F4F0] text-[#55534E]">
-      <div className="max-w-[1440px] mx-auto px-5 sm:px-12">
-        {/* Closing statement */}
-        <div className="pt-32 pb-20 border-t border-[rgba(17,17,17,0.10)] grid grid-cols-1 lg:grid-cols-12 gap-10 items-end">
+      <div className="max-w-[1600px] mx-auto px-5 sm:px-10">
+        {/* Closing statement (the home page ends with its own) */}
+        {!isHome && <div className="pt-32 pb-20 grid grid-cols-1 lg:grid-cols-12 gap-10 items-end">
           <h2 className="lg:col-span-8 font-display text-[clamp(44px,7vw,112px)] leading-[0.95] tracking-[-0.045em] text-[#111111] font-medium">
             Light, engineered
             <br />
@@ -54,13 +54,13 @@ export const Footer: React.FC = () => {
               Request a sample
             </Link>
           </div>
-        </div>
+        </div>}
 
         {/* Link grid */}
-        <div className="py-14 border-t border-[rgba(17,17,17,0.10)] grid grid-cols-2 md:grid-cols-12 gap-10 text-[14px]">
+        <div className="py-14 grid grid-cols-2 md:grid-cols-12 gap-10 text-[14px]">
           <div className="col-span-2 md:col-span-5 space-y-5">
             <div className="flex items-baseline gap-2">
-              <span className="font-display text-[19px] font-semibold tracking-[-0.04em] text-[#111111]">TYRIA</span>
+              <span className="font-display text-[19px] font-medium tracking-[-0.04em] text-[#111111]">Tyria</span>
               <span className="spec-label !text-[10px]">Lighting</span>
             </div>
             <div className="space-y-1 leading-relaxed">
@@ -88,7 +88,7 @@ export const Footer: React.FC = () => {
               <div className="spec-label">{col.title}</div>
               <ul className="space-y-2">
                 {col.links.map((l) => (
-                  <li key={l.to}>
+                  <li key={l.label}>
                     <Link to={l.to} className="text-[#111111] hover:opacity-60 transition-opacity">
                       {l.label}
                     </Link>
@@ -100,7 +100,7 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Bottom bar */}
-        <div className="py-6 border-t border-[rgba(17,17,17,0.10)] flex flex-col md:flex-row md:items-center justify-between gap-3 font-mono text-[10px] tracking-[0.08em] uppercase text-[#8C8A84]">
+        <div className="mb-6 rounded-[28px] md:rounded-full bg-stone/60 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-3 font-mono text-[10px] tracking-[0.08em] uppercase text-[#8C8A84]">
           <span>© {new Date().getFullYear()} Shenzhen Tyria Lighting Technology Co., Ltd.</span>
           <span className="flex flex-wrap gap-x-4 gap-y-1">
             {CERTIFICATIONS.map((c) => (

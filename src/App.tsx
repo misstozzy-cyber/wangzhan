@@ -1,19 +1,15 @@
 import React, { useEffect } from 'react';
 import Lenis from 'lenis';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { GlowProvider } from './context/GlowContext';
 import { InquiryProvider } from './context/InquiryContext';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
 import { InquiryDrawer } from './components/common/InquiryDrawer';
-import { CompareDrawer } from './components/common/CompareDrawer';
 import { HomePage } from './pages/HomePage';
 import { ProductsPage } from './pages/ProductsPage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
-import { AtlasPage } from './pages/AtlasPage';
-import { SpecFinderPage } from './pages/SpecFinderPage';
 import { DesignerHubPage } from './pages/DesignerHubPage';
-import { ApplicationsPage } from './pages/ApplicationsPage';
 import { FactoryPage } from './pages/FactoryPage';
 import { AboutPage } from './pages/AboutPage';
 import { ContactPage } from './pages/ContactPage';
@@ -77,15 +73,14 @@ export const App: React.FC = () => {
                   element={
                     <HomePage
                       products={products}
-                      catalogs={catalogs}
                       factoryAssets={factoryAssets}
                     />
                   }
                 />
-                <Route
-                  path="/products/neon-flex/atlas"
-                  element={<AtlasPage products={products} />}
-                />
+                <Route path="/products/neon-flex/atlas" element={<Navigate to="/products/neon-flex" replace />} />
+                <Route path="/spec-finder" element={<Navigate to="/products" replace />} />
+                <Route path="/applications" element={<Navigate to="/products" replace />} />
+                <Route path="/designer-hub" element={<Navigate to="/downloads" replace />} />
                 <Route
                   path="/products"
                   element={<ProductsPage products={products} />}
@@ -103,11 +98,7 @@ export const App: React.FC = () => {
                   element={<ProductDetailPage products={products} />}
                 />
                 <Route
-                  path="/spec-finder"
-                  element={<SpecFinderPage products={products} />}
-                />
-                <Route
-                  path="/designer-hub"
+                  path="/downloads"
                   element={
                     <DesignerHubPage
                       products={products}
@@ -115,10 +106,6 @@ export const App: React.FC = () => {
                       iesLibrary={iesLibrary}
                     />
                   }
-                />
-                <Route
-                  path="/applications"
-                  element={<ApplicationsPage products={products} />}
                 />
                 <Route
                   path="/factory"
@@ -135,7 +122,6 @@ export const App: React.FC = () => {
               </Routes>
             </main>
             <Footer />
-            <CompareDrawer products={products} />
             <InquiryDrawer />
           </div>
         </BrowserRouter>

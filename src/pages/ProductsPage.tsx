@@ -24,7 +24,7 @@ interface ProductsPageProps {
 
 export const ProductsPage: React.FC<ProductsPageProps> = ({ products }) => {
   const { family, series } = useParams<{ family?: string; series?: string }>();
-  const { addItem, compareIds, toggleCompare } = useInquiry();
+  const { addItem } = useInquiry();
 
   const [selectedFamily, setSelectedFamily] = useState<string>(family || 'ALL');
   const [selectedSeries, setSelectedSeries] = useState<string>(series || 'ALL');
